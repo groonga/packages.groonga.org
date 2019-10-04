@@ -1,0 +1,45 @@
+Source: fasttext
+Priority: optional
+Maintainer: Kentaro Hayashi <hayashi@clear-code.com>
+Build-Depends:
+ debhelper (>= 12.1.1),
+ cmake
+Standards-Version: 3.9.8
+Section: libs
+Homepage: https://fasttext.cc/
+
+Package: libfasttext-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends:
+ libfasttext (= ${binary:Version}),
+ ${shlibs:Depends},
+ ${misc:Depends}
+Description: Development package for fastText
+ fastText is a library for efficient learning of word representations 
+ and sentence classification.
+ .
+ This package contains header files to develop a software using fastText.
+
+Package: libfasttext
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Library package for fastText
+ fastText is a library for efficient learning of word representations 
+ and sentence classification.
+ .
+ This package contains runtime libraries for fastText.
+
+Package: fasttext-tools
+Architecture: any
+Depends:
+ libfasttext (= ${binary:Version}),
+ ${shlibs:Depends},
+ ${misc:Depends}
+Description: Tool collection package for fastText
+ fastText is a library for efficient learning of word representations 
+ and sentence classification.
+ .
+ This package contains tools for manipulate models for fastText.

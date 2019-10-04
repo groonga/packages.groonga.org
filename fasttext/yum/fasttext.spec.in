@@ -1,0 +1,79 @@
+Name:		fasttext
+Version:	0.9.1
+Release:	1%{?dist}
+Summary:	Efficient learning of word representations and sentence classification
+
+Group:		Applications/Text
+License:	MIT
+URL:		https://github.com/facebookresearch/fastText
+Source0:	fasttext-%{version}.tar.gz
+
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
+BuildRequires:	cmake3
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description
+The fastText is a library for efficient learning of
+word representations and sentence classification.
+
+%package libs
+Summary:	Runtime libraries for fastText
+Group:		System Environment/Libraries
+Requires(post):	/sbin/ldconfig
+Requires(postun):	/sbin/ldconfig
+
+%description libs
+This package contains the libraries for fastText
+
+%package tools
+Summary:	Tools for fastText
+Group:		Applications/Text
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description tools
+This package contains tools for manipulate models for fastText
+
+%package devel
+Summary:	Libraries and header files for fastText
+Group:		Development/Libraries
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description devel
+This package contains header files to develop a software using fastText
+
+%prep
+%setup -q
+
+%build
+%cmake3 .
+make %{?_smp_mflags}
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
+# need to move %{_libdir} because lib is hardcoded in CMakeLists.txt
+mv %{buildroot}/usr/lib %{buildroot}%{_libdir}
+rm -f $RPM_BUILD_ROOT%{_libdir}/*.a
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%post libs -p /sbin/ldconfig
+
+%postun libs -p /sbin/ldconfig
+
+%files libs
+%defattr(-,root,root,-)
+%{_libdir}/*.so*
+
+%files devel
+%defattr(-,root,root,-)
+%{_includedir}/fasttext/*.h
+
+%files tools
+%defattr(-,root,root,-)
+%{_bindir}/*
+
+%changelog
+* Tue Oct 1 2019 Kentaro Hayashi <hayashi@clear-code.com> - 0.9.1-1
+- initial packaging

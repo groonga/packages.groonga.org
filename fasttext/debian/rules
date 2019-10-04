@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+#export DH_VERBOSE = 1
+
+%:
+	dh $@ --buildsystem=cmake
+
+override_dh_auto_install:
+	dh_auto_install
+	mkdir -p $(CURDIR)/debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)
+	mv $(CURDIR)/debian/tmp/usr/lib/*.so $(CURDIR)/debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/
+	rm -f $(CURDIR)/debian/tmp/usr/lib/*.a
+
