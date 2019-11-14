@@ -39,6 +39,7 @@ class GroongaRepositoryTask < RepositoryTask
 
   def all_products
     [
+      "fasttext",
       "sentencepiece",
     ]
   end
