@@ -36,13 +36,6 @@ class GroongaRepositoryTask < RepositoryTask
       "C97E4649A2051D0CEA1A73F972A7496B45499429", # old 1024bit
     ]
   end
-
-  def all_products
-    [
-      "fasttext",
-      "sentencepiece",
-    ]
-  end
 end
 
 repository_task = GroongaRepositoryTask.new
