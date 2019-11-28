@@ -14,6 +14,11 @@ class GroongaRepositoryTask < RepositoryTask
     "groonga"
   end
 
+  def repository_version
+    # TODO: Create groonga-archive-keyring and use its version
+    nil
+  end
+
   def repository_label
     "The Groonga Project"
   end
