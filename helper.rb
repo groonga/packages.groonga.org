@@ -9,7 +9,7 @@ module Helper
     end
 
     def repository_label
-      "Groonga"
+      "The Groonga Project"
     end
 
     def repository_description
