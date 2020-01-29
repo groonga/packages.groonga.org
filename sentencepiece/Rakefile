@@ -1,56 +1,13 @@
-UBUNTU_CODE_NAMES = "xenial,bionic,disco"
-UBUNTU_VERSIONS = "16.04,18.04,19.04"
-LAUNCHPAD_PPA = "groonga-ppa"
+require_relative "../packages-groonga-org-package-task"
 
-apache_arrow_path = "../vendor/packages.red-data-tools.org/vendor/apache-arrow"
-require_relative "#{apache_arrow_path}/dev/tasks/linux-packages/package-task"
-
-ENV["APT_TARGETS"] ||= "debian-buster"
-ENV["CENTOS_VERSIONS"] ||= "7"
-
-class SentencePiecePackageTask < PackageTask
+class SentencePiecePackageTask < PackagesGroongaOrgPackageTask
   def initialize
-    vendor = File.join(__dir__, "..", "vendor")
-    @apache_arrow_repository = File.join(vendor,
-                                         "packages.red-data-tools.org",
-                                         "vendor",
-                                         "apache-arrow")
-    @groonga_repository = File.join(vendor, "groonga")
     super("sentencepiece", "0.1.83", nil)
     @original_archive_base_name = "#{@package}-#{@version}-Source"
     @original_archive_name = "#{@original_archive_base_name}.tar.xz"
   end
 
-  def define
-    super
-    define_ppa_task
-    define_apt_build_sh_task
-    define_yum_build_sh_task
-  end
-
   private
-  def define_ppa_task
-    namespace :ppa do
-      desc "Upload SentencePiece source packages"
-      task :upload => :dist do
-        upload_script = File.join(@groonga_repository,
-                                  "packages",
-                                  "ubuntu",
-                                  "upload.rb")
-        pgp_sign_key = env_value("LAUNCHPAD_UPLOADER_PGP_KEY")
-        sh(upload_script,
-           "--package", @package,
-           "--version", @version,
-           "--source-archive", @full_archive_name,
-           "--ubuntu-code-names", UBUNTU_CODE_NAMES,
-           "--ubuntu-versions", UBUNTU_VERSIONS,
-           "--debian-directory", "debian/",
-           "--ppa", LAUNCHPAD_PPA,
-           "--pgp-sign-key", pgp_sign_key)
-      end
-    end
-  end
-
   def define_archive_task
     file @original_archive_name do
       base_url = "https://github.com/google/#{@package}/releases/download"
@@ -68,40 +25,16 @@ class SentencePiecePackageTask < PackageTask
     end
   end
 
-  def define_apt_build_sh_task
-    apache_arrow_apt_build_sh =
-      File.join(@apache_arrow_repository,
-                "dev",
-                "tasks",
-                "linux-packages",
-                "apt",
-                "build.sh")
-    apt_build_sh = File.join(__dir__, "apt", "build.sh")
-    file apt_build_sh => apache_arrow_apt_build_sh do |task|
-      cp(apache_arrow_apt_build_sh,
-         task.name)
-    end
-    namespace :apt do
-      task :build => apt_build_sh
-    end
+  def apt_targets_default
+    [
+      "debian-buster",
+    ]
   end
 
-  def define_yum_build_sh_task
-    apache_arrow_yum_build_sh =
-      File.join(@apache_arrow_repository,
-                "dev",
-                "tasks",
-                "linux-packages",
-                "yum",
-                "build.sh")
-    yum_build_sh = File.join(__dir__, "yum", "build.sh")
-    file yum_build_sh => apache_arrow_yum_build_sh do |task|
-      cp(apache_arrow_yum_build_sh,
-         task.name)
-    end
-    namespace :yum do
-      task :build => yum_build_sh
-    end
+  def yum_targets_default
+    [
+      "centos-7",
+    ]
   end
 end
 

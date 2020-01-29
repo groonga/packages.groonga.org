@@ -1,5 +1,12 @@
-/GPG-KEY-*
+/*/*.tar.*
+/*/apt/build.sh
+/*/apt/env.sh
+/*/apt/repositories/
+/*/apt/tmp/
+/*/yum/build.sh
+/*/yum/env.sh
+/*/yum/repositories/
+/*/yum/tmp/
 /Gemfile.lock
 /ansible/playbook.retry
 /repositories/
-/tmp/
