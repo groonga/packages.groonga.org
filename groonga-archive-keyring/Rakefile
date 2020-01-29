@@ -35,6 +35,7 @@ class GroongaArchiveKeyringPackageTask < PackagesGroongaOrgPackageTask
 
   def apt_targets_default
     [
+      "debian-stretch",
       "debian-buster",
     ]
   end
