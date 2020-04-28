@@ -20,4 +20,6 @@ module Helper
       "https://packages.groonga.org"
     end
   end
+
+  APACHE_ARROW_VERSION = "0.17.0"
 end
