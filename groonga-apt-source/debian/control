@@ -1,21 +1,23 @@
-Source: groonga-archive-keyring
+Source: groonga-apt-source
 Section: misc
 Priority: important
 Maintainer: Groonga <packages@groonga.org>
 Build-Depends:
-  debhelper (>= 9)
+  debhelper (>= 9),
+  gnupg,
+  lsb-release
 Standards-Version: 3.9.7
 Homepage: https://groonga.org/
 
-Package: groonga-archive-keyring
-Section: oldlibs
-Priority: optional
+Package: groonga-apt-source
+Section: misc
 Architecture: all
+Replaces: groonga-archive-keyring (<< 2020.8.7-1)
+Breaks: groonga-archive-keyring (<< 2020.8.7-1)
 Depends:
   ${misc:Depends},
-  groonga-apt-source
+  apt-transport-https,
+  gnupg
 Description: GnuPG archive key and APT source of the Groonga archive
  The Groonga project digitally signs its Release files. This
  package contains the archive key used for that.
- .
- This is a trnsitional package. It can safely be removed.

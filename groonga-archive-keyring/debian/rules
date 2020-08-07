@@ -8,30 +8,3 @@ export DH_OPTIONS
 
 %:
 	dh $@
-
-override_dh_auto_build:
-	gpg \
-	  --no-default-keyring \
-	  --keyring ./groonga-archive-keyring.gpg \
-	  --import keys
-
-	( \
-	  distribution=$$(lsb_release --id --short | tr 'A-Z' 'a-z'); \
-	  code_name=$$(lsb_release --codename --short); \
-	  echo "Types: deb deb-src"; \
-	  echo "URIs: https://packages.groonga.org/$${distribution}/"; \
-	  echo "Suites: $${code_name}"; \
-	  echo "Components: main"; \
-	  echo "Signed-By: /usr/share/keyrings/groonga-archive-keyring.gpg"; \
-	) > groonga.sources
-
-override_dh_install:
-	install -d debian/tmp/usr/share/keyrings/
-	install -m 0644 groonga-archive-keyring.gpg \
-	  debian/tmp/usr/share/keyrings/
-
-	install -d debian/tmp/etc/apt/sources.list.d/
-	install -m 0644 groonga.sources \
-	  debian/tmp/etc/apt/sources.list.d/
-
-	dh_install
