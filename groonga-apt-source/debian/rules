@@ -26,7 +26,7 @@ override_dh_auto_build:
 	  echo "Types: deb deb-src"; \
 	  echo "URIs: https://packages.groonga.org/$${distribution}/"; \
 	  echo "Suites: $${code_name}"; \
-	  echo "Components: main"; \
+	  echo "Components: $${component}"; \
 	  echo "Signed-By: /usr/share/keyrings/groonga-archive-keyring.gpg"; \
 	) > groonga.sources
 
