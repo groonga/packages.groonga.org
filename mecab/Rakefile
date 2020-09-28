@@ -1,0 +1,98 @@
+require_relative "../packages-groonga-org-package-task"
+
+class MecabPackageTask < PackagesGroongaOrgPackageTask
+  def initialize
+    super("mecab", "0.996", nil)
+    version = "0.996"
+    release = "1"
+    base_url = "http://vault.centos.org/8.2.2004/AppStream/Source/SPackages"
+
+    @srpm_base_name = "mecab-#{@version}"
+    @dist = ".module_el8.2.0+493+63b41e36.9"
+
+    @srpm_name = "#{@srpm_base_name}-#{release}#{@dist}.src.rpm"
+    @download_url = "#{base_url}/#{@srpm_name}"
+  end
+
+  private
+  def yum_build
+    tmp_dir = "#{yum_dir}/tmp"
+    rm_rf(tmp_dir)
+    mkdir_p(tmp_dir)
+
+    env_sh = "#{yum_dir}/env.sh"
+    File.open(env_sh, "w") do |file|
+      file.puts(<<-ENV)
+SRPM=#{@srpm_name}
+PACKAGE=#{@rpm_package}
+DOWNLOAD_URL=#{@download_url}
+DIST=#{@dist}
+      ENV
+    end
+
+    spec = "#{tmp_dir}/#{@rpm_package}.spec"
+    spec_in_data = File.read(yum_spec_in_path)
+    spec_data = substitute_content(spec_in_data) do |key, matched|
+      yum_expand_variable(key) || matched
+    end
+    File.open(spec, "w") do |spec_file|
+      spec_file.print(spec_data)
+    end
+
+    yum_targets.each do |target|
+      cd(yum_dir) do
+        distribution, version, architecture = target.split("-", 3)
+        os = "#{distribution}-#{version}"
+        docker_run(os, architecture)
+      end
+    end
+  end
+
+  def define_yum_task
+    namespace :yum do
+      source_build_sh = "#{__dir__}/yum/build.sh"
+      file yum_build_sh => source_build_sh do
+        cp(source_build_sh, yum_build_sh)
+      end
+
+      repositories_dir = "#{yum_dir}/repositories"
+      directory repositories_dir
+
+      desc "Build RPM packages"
+      if enable_yum?
+        build_dependencies = [
+          repositories_dir,
+          yum_build_sh,
+          yum_spec_in_path,
+        ]
+      else
+        build_dependencies = []
+      end
+      task :build => build_dependencies do
+        yum_build if enable_yum?
+      end
+    end
+
+    desc "Release Yum repositories"
+    yum_tasks = [
+      "yum:build",
+    ]
+    task :yum => yum_tasks
+  end
+
+  def define_archive_task
+  end
+
+  def apt_targets_default
+    []
+  end
+
+  def yum_targets_default
+    [
+      "centos-8",
+    ]
+  end
+end
+
+task = MecabPackageTask.new
+task.define
