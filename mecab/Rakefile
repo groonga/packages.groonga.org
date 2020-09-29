@@ -3,15 +3,6 @@ require_relative "../packages-groonga-org-package-task"
 class MecabPackageTask < PackagesGroongaOrgPackageTask
   def initialize
     super("mecab", "0.996", nil)
-    version = "0.996"
-    release = "1"
-    base_url = "http://vault.centos.org/8.2.2004/AppStream/Source/SPackages"
-
-    @srpm_base_name = "mecab-#{@version}"
-    @dist = ".module_el8.2.0+493+63b41e36.9"
-
-    @srpm_name = "#{@srpm_base_name}-#{release}#{@dist}.src.rpm"
-    @download_url = "#{base_url}/#{@srpm_name}"
   end
 
   private
