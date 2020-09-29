@@ -11,3 +11,9 @@ RUN \
     rpm-build \
     rpmdevtools && \
   dnf clean ${quiet} all
+
+RUN \
+  sed \
+    -i'' \
+    -e 's/^%dist .*/%dist .module_el8.2.0+493+63b41e36/' \
+    /etc/rpm/macros.dist

@@ -7,8 +7,9 @@ class MecabPackageTask < PackagesGroongaOrgPackageTask
 
   private
   def define_archive_task
-    dist = ".module_el8.2.0+493+63b41e36.9"
-    srpm_name = "#{@rpm_package}-#{@version}-#{@rpm_release}#{dist}.src.rpm"
+    dist = ".module_el8.2.0+493+63b41e36"
+    release = "9"
+    srpm_name = "#{@rpm_package}-#{@version}-#{@rpm_release}#{dist}.#{release}.src.rpm"
 
     file srpm_name do
       base_url = "http://vault.centos.org/8.2.2004/AppStream/Source/SPackages"
