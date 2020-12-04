@@ -89,6 +89,23 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
           cp(deb, latest_archive_keyring_deb)
         end
         task :latest => latest_archive_keyring_deb
+
+        debs = [latest_deb, latest_archive_keyring_deb]
+        debs.each do |deb|
+          repository_gpg_key_ids.each do |gpg_key_id|
+            deb_asc = "#{deb}.asc.#{gpg_key_id}"
+            file deb_asc => deb do
+              rm_f(deb_asc)
+              sh("gpg",
+                 "--armor",
+                 "--detach-sign",
+                 "--local-user", gpg_key_id,
+                 "--output", deb_asc,
+                 deb)
+            end
+            task :latest => deb_asc
+          end
+        end
       end
       task :release => :latest
     end
