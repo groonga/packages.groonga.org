@@ -35,7 +35,6 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
 
   def apt_targets_default
     [
-      "debian-stretch",
       "debian-buster",
       "ubuntu-bionic",
       "ubuntu-focal",
