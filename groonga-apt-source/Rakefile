@@ -39,6 +39,7 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
       "debian-buster",
       "ubuntu-bionic",
       "ubuntu-focal",
+      "ubuntu-groovy",
     ]
   end
 
