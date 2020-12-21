@@ -1,0 +1,80 @@
+# -*- ruby -*-
+
+require_relative "../packages-groonga-org-package-task"
+
+class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
+  def initialize
+    super("apache-arrow", "2.0.0", nil)
+  end
+
+  private
+  def define_archive_task
+    file @archive_name do
+      touch(@archive_name)
+    end
+  end
+
+  def download_files(base_directory,
+                     repositories_directory,
+                     *patterns)
+    base_url = "https://apache.bintray.com/arrow/#{base_directory}"
+    URI.open(base_url) do |index|
+      index.read.scan(/<a href="(.*?)"/) do |href,|
+        next if href.end_with?(".asc")
+        next if href.end_with?(".sha512")
+        next unless patterns.any? {|pattern| pattern.match?(href)}
+        download("#{base_url}/#{href}",
+                 "#{repositories_directory}/#{base_directory}/#{href}")
+      end
+    end
+  end
+
+  def apt_targets
+    [
+      "debian-buster",
+    ]
+  end
+
+  def apt_build
+    apt_targets.each do |target|
+      _, code_name = target.split("-", 2)
+      base_directory = "debian/pool/#{code_name}/main/"
+      base_directory << "#{@package[0]}/"
+      base_directory << "#{@package}"
+      download_files(base_directory,
+                     "#{apt_dir}/repositories",
+                     /\A#{Regexp.escape(@package)}_#{Regexp.escape(@version)}/,
+                     /_#{Regexp.escape(@version)}-\d+_amd64\.deb\z/)
+    end
+  end
+
+  def enable_ubuntu?
+    false
+  end
+
+  def yum_targets
+    [
+      "centos-7",
+      "centos-8",
+    ]
+  end
+
+  def yum_build
+    yum_targets.each do |target|
+      _, version = target.split("-", 2)
+
+      rpm_base_directory = "centos/#{version}/x86_64/Packages"
+      download_files(rpm_base_directory,
+                     "#{yum_dir}/repositories",
+                     /-#{Regexp.escape(@version)}-\d+\.[^.]+\.x86_64\.rpm\z/)
+
+      srpm_base_directory = "centos/#{version}/Source/SPackages"
+      download_files(srpm_base_directory,
+                     "#{yum_dir}/repositories",
+                     /-#{Regexp.escape(@version)}-\d+\.[^.]+\.src\.rpm\z/)
+    end
+  end
+end
+
+task = ApacheArrowPackageTask.new
+task.define
