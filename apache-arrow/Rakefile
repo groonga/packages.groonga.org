@@ -44,7 +44,7 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
       download_files(base_directory,
                      "#{apt_dir}/repositories",
                      /\A#{Regexp.escape(@package)}_#{Regexp.escape(@version)}/,
-                     /_#{Regexp.escape(@version)}-\d+_amd64\.deb\z/)
+                     /_#{Regexp.escape(@version)}-\d+_(?:amd64|arm64)\.deb\z/)
     end
   end
 
@@ -67,6 +67,11 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
       download_files(rpm_base_directory,
                      "#{yum_dir}/repositories",
                      /-#{Regexp.escape(@version)}-\d+\.[^.]+\.x86_64\.rpm\z/)
+
+      rpm_base_directory = "centos/#{version}/aarch64/Packages"
+      download_files(rpm_base_directory,
+                     "#{yum_dir}/repositories",
+                     /-#{Regexp.escape(@version)}-\d+\.[^.]+\.aarch64\.rpm\z/)
 
       srpm_base_directory = "centos/#{version}/Source/SPackages"
       download_files(srpm_base_directory,
