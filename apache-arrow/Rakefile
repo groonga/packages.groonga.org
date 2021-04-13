@@ -32,13 +32,16 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def apt_targets
     [
       "debian-buster",
+      "ubuntu-bionic",
+      "ubuntu-focal",
+      "ubuntu-groovy",
     ]
   end
 
   def apt_build
     apt_targets.each do |target|
-      _, code_name = target.split("-", 2)
-      base_directory = "debian/pool/#{code_name}/main/"
+      distribution, code_name = target.split("-", 2)
+      base_directory = "#{distribution}/pool/#{code_name}/main/"
       base_directory << "#{@package[0]}/"
       base_directory << "#{@package}"
       download_files(base_directory,
