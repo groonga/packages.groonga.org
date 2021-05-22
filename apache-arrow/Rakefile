@@ -4,7 +4,7 @@ require_relative "../packages-groonga-org-package-task"
 
 class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def initialize
-    super("apache-arrow", "3.0.0", nil)
+    super("apache-arrow", "4.0.0", nil)
   end
 
   private
@@ -17,7 +17,7 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def download_files(base_directory,
                      repositories_directory,
                      *patterns)
-    base_url = "https://apache.bintray.com/arrow/#{base_directory}"
+    base_url = "https://apache.jfrog.io/artifactory/arrow/#{base_directory}"
     URI.open(base_url) do |index|
       index.read.scan(/<a href="(.*?)"/) do |href,|
         next if href.end_with?(".asc")
@@ -32,6 +32,7 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def apt_targets
     [
       "debian-buster",
+      "debian-bullseye",
       "ubuntu-bionic",
       "ubuntu-focal",
       "ubuntu-groovy",
