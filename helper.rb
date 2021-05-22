@@ -1,7 +1,7 @@
 module Helper
   module RepositoryDetail
     def repository_version
-      "2021.5.23"
+      "2021.5.24"
     end
 
     def repository_name
