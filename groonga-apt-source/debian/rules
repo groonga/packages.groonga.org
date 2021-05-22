@@ -28,7 +28,7 @@ override_dh_auto_build:
 	  echo "Suites: $${code_name}"; \
 	  echo "Components: $${component}"; \
 	  echo "Signed-By: /usr/share/keyrings/groonga-archive-keyring.gpg"; \
-	) > groonga.sources
+	) > groonga.list
 
 override_dh_install:
 	install -d debian/tmp/usr/share/keyrings/
@@ -36,7 +36,7 @@ override_dh_install:
 	  debian/tmp/usr/share/keyrings/
 
 	install -d debian/tmp/etc/apt/sources.list.d/
-	install -m 0644 groonga.sources \
+	install -m 0644 groonga.list \
 	  debian/tmp/etc/apt/sources.list.d/
 
 	dh_install
