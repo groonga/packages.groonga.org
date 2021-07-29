@@ -4,7 +4,7 @@ require_relative "../packages-groonga-org-package-task"
 
 class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def initialize
-    super("apache-arrow", "4.0.1", nil)
+    super("apache-arrow", "5.0.0", Time.new(2021, 7, 29))
   end
 
   private
@@ -36,6 +36,7 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
       "ubuntu-bionic",
       "ubuntu-focal",
       "ubuntu-groovy",
+      "ubuntu-hirsute",
     ]
   end
 
