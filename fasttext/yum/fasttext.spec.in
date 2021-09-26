@@ -1,5 +1,5 @@
 Name:		fasttext
-Version:	0.9.1
+Version:	@VERSION@
 Release:	1%{?dist}
 Summary:	Efficient learning of word representations and sentence classification
 
@@ -52,7 +52,7 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 # need to move %{_libdir} because lib is hardcoded in CMakeLists.txt
-mv %{buildroot}/usr/lib %{buildroot}%{_libdir}
+mv %{buildroot}/usr/lib/* %{buildroot}%{_libdir}
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.a
 
 %clean
@@ -69,11 +69,15 @@ rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(-,root,root,-)
 %{_includedir}/fasttext/*.h
+%{_libdir}/pkgconfig/*.pc
 
 %files tools
 %defattr(-,root,root,-)
 %{_bindir}/*
 
 %changelog
+* Tue Apr 28 2020 Sutou Kouhei <kou@clear-code.com> - 0.9.2-1
+- New upstream release.
+
 * Tue Oct 1 2019 Kentaro Hayashi <hayashi@clear-code.com> - 0.9.1-1
 - initial packaging

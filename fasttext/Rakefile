@@ -2,7 +2,7 @@ require_relative "../packages-groonga-org-package-task"
 
 class FastTextPackageTask < PackagesGroongaOrgPackageTask
   def initialize
-    super("fasttext", "0.9.1", nil)
+    super("fasttext", "0.9.2", Time.new(2020, 4, 28))
     @original_archive_base_name = "fastText-#{@version}"
     @original_archive_name = "#{@original_archive_base_name}.tar.gz"
   end
