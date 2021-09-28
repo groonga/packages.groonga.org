@@ -1,4 +1,4 @@
-- hosts: package-servers
+- hosts: package_servers
   vars:
     groonga_admin_version: 0.9.5
   become: yes
