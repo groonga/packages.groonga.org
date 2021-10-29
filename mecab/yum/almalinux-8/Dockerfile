@@ -15,5 +15,5 @@ RUN \
 RUN \
   sed \
     -i'' \
-    -e 's/^%dist .*/%dist .module_el8.3.0+2049+47abd494/' \
+    -e 's/^%dist .*/%dist .module_el8.4.0+2532+b8928c02/' \
     /etc/rpm/macros.dist
