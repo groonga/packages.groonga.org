@@ -7,7 +7,7 @@ class MecabPackageTask < PackagesGroongaOrgPackageTask
 
   private
   def define_archive_task
-    dist = ".module_el8.2.0+493+63b41e36"
+    dist = ".module_el8.4.0+2532+b8928c02"
     release = "9"
     srpm_name = "#{@rpm_package}-#{@version}-#{@rpm_release}#{dist}.#{release}.src.rpm"
 
