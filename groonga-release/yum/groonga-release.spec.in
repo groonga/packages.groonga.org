@@ -1,8 +1,6 @@
 # -*- sh-shell: rpm -*-
 
-%define _centos_ver %{?centos_ver:%{centos_ver}}%{!?centos_ver:6}
-
-%if %{_centos_ver} >= 8
+%if %{rhel} >= 8
   %define disable_repository() (dnf config-manager --disable %1)
   %define enable_repository() (dnf config-manager --enable %1)
 %else
@@ -20,7 +18,7 @@ Source: %{name}-%{version}.tar.gz
 Group: System Environment/Base
 BuildArchitectures: noarch
 Requires: epel-release
-%if %{_centos_ver} >= 8
+%if %{rhel} >= 8
 Requires: dnf-command(config-manager)
 %else
 Requires: yum-utils
@@ -54,15 +52,25 @@ mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-*
 
 %post
-if grep -q 'Amazon Linux release 2' /etc/system-release 2>/dev/null; then
+
+if grep -q 'Amazon Linux' /etc/os-release 2>/dev/null; then
+  %{disable_repository groonga-almalinux}
+  %{enable_repository groonga-amazon-linux}
   %{disable_repository groonga-centos}
-  %{enable_repository groonga-linux}
-else
+elif grep -q 'CentOS' /etc/os-release 2>/dev/null; then
+  %{disable_repository groonga-almalinux}
   %{disable_repository groonga-amazon-linux}
   %{enable_repository groonga-centos}
+else
+  %{enable_repository groonga-almalinux}
+  %{disable_repository groonga-amazon-linux}
+  %{disable_repository groonga-centos}
 fi
 
 %changelog
+* Sat Oct 30 2021 Sutou Kouhei <kou@clear-code.com> - 2021.10.30-1
+- Add support for AlmaLinux 8.
+
 * Wed Jun 29 2020 Sutou Kouhei <kou@clear-code.com> - 2019.1.29-1
 - New upstream release.
 

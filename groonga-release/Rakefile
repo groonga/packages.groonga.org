@@ -38,15 +38,24 @@ class GroongaReleasePackageTask < PackagesGroongaOrgPackageTask
   def generate_repo_files
     targets = [
       {
-        id: "centos",
-        label: "CentOS $releasever",
+        id: "almalinux",
+        label: "AlmaLinux $releasever",
+        distribution: "almalinux",
         version: "$releasever",
         enabled: "1",
       },
       {
         id: "amazon-linux",
         label: "Amazon Linux 2",
+        distribution: "centos",
         version: "7",
+        enabled: "0",
+      },
+      {
+        id: "centos",
+        label: "CentOS $releasever",
+        distribution: "centos",
+        version: "$releasever",
         enabled: "0",
       },
     ]
@@ -56,7 +65,7 @@ class GroongaReleasePackageTask < PackagesGroongaOrgPackageTask
         repo.puts(<<-REPOSITORY)
 [#{repository_name}-#{target[:id]}]
 name=#{repository_label} for #{target[:label]} - $basearch
-baseurl=#{repository_url}/centos/#{target[:version]}/$basearch/
+baseurl=#{repository_url}/#{target[:distribution]}/#{target[:version]}/$basearch/
 gpgcheck=1
 enabled=#{target[:enabled]}
         REPOSITORY
@@ -88,9 +97,8 @@ enabled=#{target[:enabled]}
 
   def yum_targets_default
     [
-      "centos-6",
+      "almalinux-8",
       "centos-7",
-      "centos-8",
     ]
   end
 
