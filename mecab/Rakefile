@@ -7,12 +7,12 @@ class MecabPackageTask < PackagesGroongaOrgPackageTask
 
   private
   def define_archive_task
-    dist = ".module_el8.2.0+493+63b41e36"
+    dist = ".module_el8.4.0+2532+b8928c02"
     release = "9"
     srpm_name = "#{@rpm_package}-#{@version}-#{@rpm_release}#{dist}.#{release}.src.rpm"
 
     file srpm_name do
-      base_url = "http://vault.centos.org/8.2.2004/AppStream/Source/SPackages"
+      base_url = "https://repo.almalinux.org/almalinux/8.4/AppStream/Source/Packages/"
       download("#{base_url}/#{srpm_name}", srpm_name)
     end
 
@@ -30,7 +30,7 @@ class MecabPackageTask < PackagesGroongaOrgPackageTask
 
   def yum_targets_default
     [
-      "centos-8",
+      "almalinux-8"
     ]
   end
 end
