@@ -30,7 +30,8 @@ class MecabPackageTask < PackagesGroongaOrgPackageTask
 
   def yum_targets_default
     [
-      "almalinux-8"
+      "almalinux-8",
+      "almalinux-8-aarch64",
     ]
   end
 end
