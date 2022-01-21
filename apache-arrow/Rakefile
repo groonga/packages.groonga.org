@@ -82,6 +82,10 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
       download_files(srpm_base_directory,
                      "#{yum_dir}/repositories",
                      /-#{Regexp.escape(@version)}-\d+\.[^.]+\.src\.rpm\z/)
+      mv("#{yum_dir}/repositories/Source",
+         "#{yum_dir}/repositories/source")
+      mv("#{yum_dir}/repositories/source/SPackages",
+         "#{yum_dir}/repositories/source/SRPMS")
     end
   end
 end
