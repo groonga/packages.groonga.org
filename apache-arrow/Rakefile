@@ -4,7 +4,7 @@ require_relative "../packages-groonga-org-package-task"
 
 class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def initialize
-    super("apache-arrow", "6.0.1", Time.new(2021, 11, 18))
+    super("apache-arrow", "7.0.0", Time.new(2022, 2, 3))
   end
 
   private
