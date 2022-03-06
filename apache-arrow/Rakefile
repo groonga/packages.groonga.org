@@ -59,13 +59,16 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def yum_targets
     [
       "almalinux-8",
+      "amazon-linux-2",
       "centos-7",
     ]
   end
 
   def yum_build
     yum_targets.each do |target|
-      distribution, version = target.split("-", 2)
+      components = target.split("-")
+      distribution = components[0..-2].join("-")
+      version = components.last
 
       rpm_base_directory = "#{distribution}/#{version}/x86_64/Packages"
       download_files(rpm_base_directory,
