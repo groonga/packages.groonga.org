@@ -47,8 +47,8 @@ class GroongaReleasePackageTask < PackagesGroongaOrgPackageTask
       {
         id: "amazon-linux",
         label: "Amazon Linux 2",
-        distribution: "centos",
-        version: "7",
+        distribution: "amazon-linux",
+        version: "2",
         enabled: "0",
       },
       {
@@ -98,6 +98,7 @@ enabled=#{target[:enabled]}
   def yum_targets_default
     [
       "almalinux-8",
+      "amazon-linux-2",
       "centos-7",
     ]
   end
@@ -105,7 +106,9 @@ enabled=#{target[:enabled]}
   def define_yum_latest_task
     namespace :yum do
       yum_targets.each do |target|
-        distribution, version = target.split("-", 2)
+        components = target.split("-")
+        distribution = components[0..-2].join("-")
+        version = components.last
         rpm = [
           yum_dir,
           "repositories",

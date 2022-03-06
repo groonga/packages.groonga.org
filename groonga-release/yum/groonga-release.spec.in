@@ -68,6 +68,9 @@ else
 fi
 
 %changelog
+* Sun Mar 6 2022 Sutou Kouhei <kou@clear-code.com> - 2022.3.6-1
+- Split Amazon Linux 2 repository.
+
 * Sat Oct 30 2021 Sutou Kouhei <kou@clear-code.com> - 2021.10.30-1
 - Add support for AlmaLinux 8.
 
