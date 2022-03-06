@@ -18,6 +18,14 @@ class GroongaRepositoryTask < RepositoryTask
   def repository_gpg_key_id
     repository_gpg_key_ids.first
   end
+
+  def yum_targets
+    [
+      ["almalinux", "8"],
+      ["amazon-linux", "2"],
+      ["centos", "7"],
+    ]
+  end
 end
 
 repository_task = GroongaRepositoryTask.new
