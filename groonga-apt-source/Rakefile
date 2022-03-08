@@ -39,8 +39,7 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
       "debian-bullseye",
       "ubuntu-bionic",
       "ubuntu-focal",
-      "ubuntu-groovy",
-      "ubuntu-hirsute",
+      "ubuntu-impish",
     ]
   end
 
@@ -76,23 +75,30 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
         end
         task :latest => latest_deb
 
-        # For backward compatibility.
-        # Users can install the apt-source package by
-        # the old "apt install ./XXX-archive-keyring_*.deb".
-        pakcage_archive_keyring =
-          @package.gsub(/apt-source\z/, "archive-keyring")
-        latest_archive_keyring_deb = [
-          apt_dir,
-          "repositories",
-          distribution,
-          "#{pakcage_archive_keyring}-latest-#{code_name}.deb",
-        ].join("/")
-        file latest_archive_keyring_deb => deb do
-          cp(deb, latest_archive_keyring_deb)
+        debs = [latest_deb]
+        case target
+        when "debian-buster",
+             "debian-bullseye",
+             "ubuntu-bionic",
+             "ubuntu-focal"
+          # For backward compatibility.
+          # Users can install the apt-source package by
+          # the old "apt install ./XXX-archive-keyring_*.deb".
+          pakcage_archive_keyring =
+            @package.gsub(/apt-source\z/, "archive-keyring")
+          latest_archive_keyring_deb = [
+            apt_dir,
+            "repositories",
+            distribution,
+            "#{pakcage_archive_keyring}-latest-#{code_name}.deb",
+          ].join("/")
+          file latest_archive_keyring_deb => deb do
+            cp(deb, latest_archive_keyring_deb)
+          end
+          task :latest => latest_archive_keyring_deb
+          debs << latest_archive_keyring_deb
         end
-        task :latest => latest_archive_keyring_deb
 
-        debs = [latest_deb, latest_archive_keyring_deb]
         debs.each do |deb|
           repository_gpg_key_ids.each do |gpg_key_id|
             deb_asc = "#{deb}.asc.#{gpg_key_id}"

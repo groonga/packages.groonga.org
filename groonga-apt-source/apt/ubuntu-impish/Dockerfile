@@ -1,4 +1,4 @@
-FROM ubuntu:hirsute
+FROM ubuntu:impish
 
 RUN \
   echo "debconf debconf/frontend select Noninteractive" | \
