@@ -1,0 +1,51 @@
+require_relative "../packages-groonga-org-package-task"
+
+class MecabIPADicPackageTask < PackagesGroongaOrgPackageTask
+  def initialize
+    super("mecab-ipadic", "2.7.0-20070801", nil)
+    @rpm_version = @rpm_version.gsub("-", ".")
+    @rpm_release = "16"
+  end
+
+  private
+  def rpm_archive_base_name
+    "#{@package}-#{@version}"
+  end
+
+  def define_archive_task
+    dist = ".module_el8.4.0+2532+b8928c02"
+    srpm_name = "#{@rpm_package}-#{@rpm_version}-#{@rpm_release}#{dist}.src.rpm"
+
+    file srpm_name do
+      base_url = "https://repo.almalinux.org/almalinux/8.4/AppStream/Source/Packages"
+      download("#{base_url}/#{srpm_name}", srpm_name)
+    end
+
+    [
+      @archive_name,
+      yum_spec_in_path,
+      "#{yum_dir}/terms-and-conditions-for-IFS-J.html",
+      "#{yum_dir}/LICENSE.Fedora",
+    ].each do |source_file|
+      file source_file => srpm_name do
+        sh("rpm2cpio #{srpm_name} | cpio -id")
+        mv("#{@rpm_package}.spec", yum_spec_in_path)
+        mv("terms-and-conditions-for-IFS-J.html", yum_dir)
+        mv("LICENSE.Fedora", yum_dir)
+      end
+    end
+  end
+
+  def enable_apt?
+    false
+  end
+
+  def yum_targets_default
+    [
+      "amazon-linux-2",
+    ]
+  end
+end
+
+task = MecabIPADicPackageTask.new
+task.define

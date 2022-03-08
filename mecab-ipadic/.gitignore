@@ -1,0 +1,4 @@
+/*.src.rpm
+/yum/*.spec.in
+/yum/LICENSE.Fedora
+/yum/terms-and-conditions-for-IFS-J.html
