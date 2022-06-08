@@ -40,6 +40,7 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
       "ubuntu-bionic",
       "ubuntu-focal",
       "ubuntu-impish",
+      "ubuntu-jammy",
     ]
   end
 
@@ -80,7 +81,8 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
         when "debian-buster",
              "debian-bullseye",
              "ubuntu-bionic",
-             "ubuntu-focal"
+             "ubuntu-focal",
+             "ubuntu-jammy"
           # For backward compatibility.
           # Users can install the apt-source package by
           # the old "apt install ./XXX-archive-keyring_*.deb".
