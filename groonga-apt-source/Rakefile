@@ -40,6 +40,7 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
       "ubuntu-bionic",
       "ubuntu-focal",
       "ubuntu-impish",
+      "ubuntu-jammy",
     ]
   end
 
