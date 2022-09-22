@@ -12,7 +12,7 @@ class MecabPackageTask < PackagesGroongaOrgPackageTask
     srpm_name = "#{@rpm_package}-#{@version}-#{@rpm_release}#{dist}.#{release}.src.rpm"
 
     file srpm_name do
-      base_url = "https://repo.almalinux.org/almalinux/8.4/AppStream/Source/Packages"
+      base_url = "https://repo.almalinux.org/vault/8.4/AppStream/Source/Packages"
       download("#{base_url}/#{srpm_name}", srpm_name)
     end
 
@@ -32,6 +32,7 @@ class MecabPackageTask < PackagesGroongaOrgPackageTask
     [
       "almalinux-8",
       "almalinux-8-aarch64",
+      "almalinux-9",
       "amazon-linux-2",
     ]
   end
