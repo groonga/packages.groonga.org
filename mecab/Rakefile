@@ -32,7 +32,6 @@ class MecabPackageTask < PackagesGroongaOrgPackageTask
     [
       "almalinux-8",
       "almalinux-8-aarch64",
-      "almalinux-9",
       "amazon-linux-2",
     ]
   end
