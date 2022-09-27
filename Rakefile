@@ -21,6 +21,7 @@ class GroongaRepositoryTask < RepositoryTask
 
   def yum_targets
     [
+      ["almalinux", "9"],
       ["almalinux", "8"],
       ["amazon-linux", "2"],
       ["centos", "7"],
