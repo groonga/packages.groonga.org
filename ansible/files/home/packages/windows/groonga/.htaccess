@@ -1,0 +1,2 @@
+RewriteRule "groonga-latest-(.+?)-vs(.+?)\.zip" "https://github.com/groonga/groonga/releases/download/v12.0.8/groonga-12.0.8-$1-$2.zip"
+RewriteRule "groonga-([\d\.]+?)-(.+?)-vs(.+?)\.zip" "https://github.com/groonga/groonga/releases/download/v$1/$0"
