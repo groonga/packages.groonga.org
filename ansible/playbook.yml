@@ -60,6 +60,13 @@
         owner=packages
         group=packages
         mode=0600
+    - name: Put ~packages/windows/groonga/.htaccess
+      copy:
+        src=home/packages/windows/groonga/.htaccess
+        dest=~packages/windows/groonga/.htaccess
+        owner=packages
+        group=packages
+        mode=0644
 
     # Let's encrypt
     - name: Install certbot
