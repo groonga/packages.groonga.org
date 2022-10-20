@@ -58,6 +58,13 @@ class GroongaReleasePackageTask < PackagesGroongaOrgPackageTask
         version: "$releasever",
         enabled: "0",
       },
+      {
+        id: "oracle-linux",
+        label: "Oracle Linux $releasever",
+        distribution: "oracle-linux",
+        version: "$releasever",
+        enabled: "1",
+      },
     ]
     targets.each do |target|
       repo_path = "#{@archive_base_name}/#{repository_name}-#{target[:id]}.repo"
@@ -101,6 +108,7 @@ enabled=#{target[:enabled]}
       "almalinux-9",
       "amazon-linux-2",
       "centos-7",
+      "oracle-linux-8",
     ]
   end
 
