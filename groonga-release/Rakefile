@@ -63,7 +63,7 @@ class GroongaReleasePackageTask < PackagesGroongaOrgPackageTask
         label: "Oracle Linux $releasever",
         distribution: "oracle-linux",
         version: "$releasever",
-        enabled: "1",
+        enabled: "0",
       },
     ]
     targets.each do |target|

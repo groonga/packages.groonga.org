@@ -57,14 +57,22 @@ if grep -q 'Amazon Linux' /etc/os-release 2>/dev/null; then
   %{disable_repository groonga-almalinux}
   %{enable_repository groonga-amazon-linux}
   %{disable_repository groonga-centos}
+  %{disable_repository groonga-oracle-linux}
 elif grep -q 'CentOS' /etc/os-release 2>/dev/null; then
   %{disable_repository groonga-almalinux}
   %{disable_repository groonga-amazon-linux}
   %{enable_repository groonga-centos}
+  %{disable_repository groonga-oracle-linux}
+elif grep -q 'Oracle Linux' /etc/os-release 2>/dev/null; then
+  %{disable_repository groonga-almalinux}
+  %{disable_repository groonga-amazon-linux}
+  %{disable_repository groonga-centos}
+  %{enable_repository groonga-oracle-linux}
 else
   %{enable_repository groonga-almalinux}
   %{disable_repository groonga-amazon-linux}
   %{disable_repository groonga-centos}
+  %{disable_repository groonga-oracle-linux}
 fi
 
 %changelog
