@@ -4,7 +4,7 @@ require_relative "../packages-groonga-org-package-task"
 
 class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def initialize
-    super("apache-arrow", "9.0.0", Time.new(2022, 8, 16))
+    super("apache-arrow", "10.0.0", Time.new(2022, 10, 26))
   end
 
   private
@@ -31,11 +31,9 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
 
   def apt_targets
     [
-      "debian-buster",
       "debian-bullseye",
       "ubuntu-bionic",
       "ubuntu-focal",
-      "ubuntu-hirsute",
     ]
   end
 
