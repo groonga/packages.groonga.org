@@ -7,9 +7,9 @@ class MecabPackageTask < PackagesGroongaOrgPackageTask
 
   private
   def define_archive_task
-    dist = ".module_el8.4.0+2532+b8928c02"
-    release = "9"
-    srpm_name = "#{@rpm_package}-#{@version}-#{@rpm_release}#{dist}.#{release}.src.rpm"
+    dist = ".module_el8.6.0+3340+d764b636"
+    @rpm_release = "2"
+    srpm_name = "#{@rpm_package}-#{@version}-#{@rpm_release}#{dist}.src.rpm"
 
     file srpm_name do
       base_url = "https://repo.almalinux.org/vault/8/AppStream/Source/Packages"
