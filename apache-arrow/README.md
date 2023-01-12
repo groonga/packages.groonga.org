@@ -21,12 +21,12 @@
 
   ```shell
   % cd packages.groonga.org/apache-arrow
-  % rake apt; rake yum
+  % rake apt yum
   ```
 
 3. Upload Apache Arrow packages to packages.groonga.org
 
   ```shell
   % cd ..
-  % rake apt: rake yum
+  % rake apt yum
   ```
