@@ -57,17 +57,28 @@ if grep -q 'Amazon Linux' /etc/os-release 2>/dev/null; then
   %{disable_repository groonga-almalinux}
   %{enable_repository groonga-amazon-linux}
   %{disable_repository groonga-centos}
+  %{disable_repository groonga-oracle-linux}
 elif grep -q 'CentOS' /etc/os-release 2>/dev/null; then
   %{disable_repository groonga-almalinux}
   %{disable_repository groonga-amazon-linux}
   %{enable_repository groonga-centos}
+  %{disable_repository groonga-oracle-linux}
+elif grep -q 'Oracle Linux' /etc/os-release 2>/dev/null; then
+  %{disable_repository groonga-almalinux}
+  %{disable_repository groonga-amazon-linux}
+  %{disable_repository groonga-centos}
+  %{enable_repository groonga-oracle-linux}
 else
   %{enable_repository groonga-almalinux}
   %{disable_repository groonga-amazon-linux}
   %{disable_repository groonga-centos}
+  %{disable_repository groonga-oracle-linux}
 fi
 
 %changelog
+* Wed Feb 1 2023 Horimoto Yasuhiro <horimoto@clear-code.com> - 2023.2.1-1
+- Add support for Oracle Linux 8.
+
 * Sun Mar 6 2022 Sutou Kouhei <kou@clear-code.com> - 2022.3.6-1
 - Split Amazon Linux 2 repository.
 
