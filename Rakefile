@@ -25,8 +25,8 @@ class GroongaRepositoryTask < RepositoryTask
       ["almalinux", "8"],
       ["amazon-linux", "2"],
       ["centos", "7"],
-      ["oracle-linux", "8"],
       ["oracle-linux", "9"],
+      ["oracle-linux", "8"],
     ]
   end
 end
