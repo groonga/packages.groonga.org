@@ -26,6 +26,7 @@ class GroongaRepositoryTask < RepositoryTask
       ["amazon-linux", "2"],
       ["centos", "7"],
       ["oracle-linux", "8"],
+      ["oracle-linux", "9"],
     ]
   end
 end

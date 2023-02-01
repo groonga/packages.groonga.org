@@ -76,6 +76,9 @@ else
 fi
 
 %changelog
+* Wed Feb 2 2023 Horimoto Yasuhiro <horimoto@clear-code.com> - 2023.2.2-1
+- Add support for Oracle Linux 9.
+
 * Wed Feb 1 2023 Horimoto Yasuhiro <horimoto@clear-code.com> - 2023.2.1-1
 - Add support for Oracle Linux 8.
 
