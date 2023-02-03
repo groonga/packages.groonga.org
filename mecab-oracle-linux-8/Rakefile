@@ -1,0 +1,39 @@
+require_relative "../packages-groonga-org-package-task"
+
+class MecabPackageTask < PackagesGroongaOrgPackageTask
+  def initialize
+    super("mecab", "0.996", nil)
+  end
+
+  private
+  def define_archive_task
+    dist = ".module+el8.6.0+20849+f637f661"
+    @rpm_release = "2"
+    srpm_name = "#{@rpm_package}-#{@version}-#{@rpm_release}#{dist}.src.rpm"
+
+    file srpm_name do
+      base_url = "https://yum.oracle.com/repo/OracleLinux/OL8/appstream/x86_64/getPackageSource"
+      download("#{base_url}/#{srpm_name}", srpm_name)
+    end
+
+    [@archive_name, yum_spec_in_path].each do |source_file|
+      file source_file => srpm_name do
+        sh("rpm2cpio #{srpm_name} | cpio -id")
+        mv("#{@rpm_package}.spec", yum_spec_in_path)
+      end
+    end
+  end
+
+  def enable_apt?
+    false
+  end
+
+  def yum_targets_default
+    [
+      "oracle-linux-8",
+    ]
+  end
+end
+
+task = MecabPackageTask.new
+task.define
