@@ -2,9 +2,9 @@
 
 1. Update Apache Arrow version and release data in Rakefile
 
-   ```shell
-   % git clone --recursive git@github.com:groonga/packages.groonga.org.git
-   % Editor packages.groonga.org/apache-arrow/Rakefile
+   ```console
+   $ git clone --recursive git@github.com:groonga/packages.groonga.org.git
+   $ editor packages.groonga.org/apache-arrow/Rakefile
    ```
 
    For example, We update Rakefile as below
@@ -19,14 +19,14 @@
 
 2. Downlod Apache Arrow packages
 
-   ```shell
-   % cd packages.groonga.org/apache-arrow
-   % rake apt yum
+   ```console
+   $ cd packages.groonga.org/apache-arrow
+   $ rake apt yum
    ```
 
 3. Upload Apache Arrow packages to packages.groonga.org
 
-   ```shell
-   % cd ..
-   % rake apt yum
+   ```console
+   $ cd ..
+   $ rake apt yum
    ```
