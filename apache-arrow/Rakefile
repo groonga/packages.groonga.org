@@ -32,7 +32,6 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def apt_targets
     [
       "debian-bullseye",
-      "ubuntu-bionic",
       "ubuntu-focal",
     ]
   end
