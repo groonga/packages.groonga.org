@@ -35,8 +35,8 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
 
   def apt_targets_default
     [
-      "debian-buster",
       "debian-bullseye",
+      "debian-bookworm",
       "ubuntu-bionic",
       "ubuntu-focal",
       "ubuntu-impish",
