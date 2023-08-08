@@ -47,6 +47,11 @@
         line: "Unattended-Upgrade::Mail \"root\";"
     - name: Enable NTP
       command: timedatectl set-ntp true
+    - name: "sudo: NOPASSWD"
+      copy:
+        src: etc/sudoers.d/sudo-nopasswd
+        dest: /etc/sudoers.d/sudo-nopasswd
+        mode: 0400
 
     # User
     - name: Create "packages" user
