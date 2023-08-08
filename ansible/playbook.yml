@@ -4,62 +4,70 @@
   become: yes
   tasks:
     # Base
+    - name: Set host name
+      copy:
+        content: "{{ inventory_hostname }}"
+        dest: /etc/hostname
     - name: Upgrade packages
       apt:
-        update_cache=yes
-        cache_valid_time=3600
-        upgrade=safe
+        update_cache: yes
+        cache_valid_time: 3600
+        upgrade: safe
     - name: Install base packages
-      apt: name={{ item }}
-      with_items:
-        - acpid
-        - apg
-        - apt-listchanges
-        - cron
-        - git
-        - logrotate
-        - lv
-        - vim
-        - zsh
+      apt:
+        name:
+          - apt-listchanges
+          - apt-transport-https
+          - apticron
+          - git
+          - iotop
+          - logrotate
+          - lv
+          - ruby
+          - unattended-upgrades
+          - vim
+          - zsh
     - name: Use VIM as the default editor
       command: update-alternatives --set editor /usr/bin/vim.basic
     - name: Use e-mail for apt-listchanges
-      copy:
-        src=etc/apt/listchanges.conf
-        dest=/etc/apt/listchanges.conf
+      lineinfile:
+        path: /etc/apt/listchanges.conf
+        regexp: "^frontend="
+        line: "frontend=mail"
 
     # User
     - name: Create "packages" user
-      user: name=packages
+      user:
+        name: packages
     - name: Create directories
       file:
-        path=~packages/{{ item }}
-        state=directory
-        owner=packages
-        group=packages
+        path: ~packages/{{ item }}
+        state: directory
+        owner: packages
+        group: packages
       with_items:
         - bin/
         - public/
     - name: Put ~packages/.forward
       copy:
-        content="packages@groonga.org"
-        dest=~packages/.forward
-        owner=packages
-        group=packages
+        content: "packages@groonga.org"
+        dest: ~packages/.forward
+        owner: packages
+        group: packages
     - name: Create ~packages/.ssh/
       file:
-        path=~packages/.ssh
-        state=directory
-        owner=packages
-        group=packages
-        mode=0700
+        path: ~packages/.ssh
+        state: directory
+        owner: packages
+        group: packages
+        mode: 0700
     - name: Put ~packages/.ssh/authorized_keys
       copy:
-        src=home/packages/.ssh/authorized_keys
-        dest=~packages/.ssh/authorized_keys
-        owner=packages
-        group=packages
-        mode=0600
+        src: home/packages/.ssh/authorized_keys
+        dest: ~packages/.ssh/authorized_keys
+        owner: packages
+        group: packages
+        mode: 0600
 
     # Let's encrypt
     - name: Install certbot
@@ -94,7 +102,9 @@
 
     # Apache
     - name: Install Apache
-      apt: name=apache2
+      apt:
+        name:
+          - apache2
     - name: Put Apache configuration
       copy:
         src: "{{ item }}"
@@ -120,21 +130,22 @@
 
     # Postfix
     - name: Install Postfix
-      apt: name=postfix
+      apt:
+        name: postfix
     - name: Set /etc/aliases
       copy:
-        src=etc/aliases
-        dest=/etc/aliases
+        src: etc/aliases
+        dest: /etc/aliases
       notify:
         - Update /etc/aliases
     - name: Set /etc/mailname
       copy:
-        content="packages.groonga.org"
-        dest=/etc/mailname
+        content: "{{ inventory_hostname }}"
+        dest: /etc/mailname
     - name: Put Postfix configuration
       copy:
-        src=etc/postfix/main.cf
-        dest=/etc/postfix/main.cf
+        src: etc/postfix/main.cf
+        dest: /etc/postfix/main.cf
       notify:
         - Restart Postfix
 
@@ -218,15 +229,21 @@
 
   handlers:
     - name: Restart Apache
-      service: name=apache2 state=restarted
+      service:
+        name: apache2
+        state: restarted
     - name: Update /etc/aliases
       command: postalias /etc/aliases
     - name: Restart Postfix
-      service: name=postfix state=restarted
+      service:
+        name: postfix
+        state: restarted
     - name: Restart Groonga
       service:
         name: groonga-httpd
         state: restarted
         enabled: yes
     - name: Restart Fluentd
-      service: name=td-agent state=restarted
+      service:
+        name: td-agent
+        state: restarted
