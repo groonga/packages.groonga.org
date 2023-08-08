@@ -141,10 +141,12 @@
         - ssl
       notify:
         - Restart Apache
-    - name: Set log rotation
-      copy:
-        src: etc/logrotate.d/apache2
-        dest: /etc/logrotate.d/apache2
+    - name: Increase Apache log rotate days
+      lineinfile:
+        path: /etc/logrotate.d/apache2
+        regexp: "^(\\s+)rotate "
+        line: "\\1rotate -1"
+        backrefs: yes
 
     # Postfix
     - name: Install Postfix
