@@ -24,6 +24,7 @@
           - logrotate
           - lv
           - ruby
+          - systemd-timesyncd
           - unattended-upgrades
           - vim
           - zsh
@@ -34,6 +35,8 @@
         path: /etc/apt/listchanges.conf
         regexp: "^frontend="
         line: "frontend=mail"
+    - name: Enable NTP
+      command: timedatectl set-ntp true
 
     # User
     - name: Create "packages" user
