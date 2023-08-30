@@ -56,7 +56,6 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def yum_targets
     [
       "almalinux-8",
-      "amazon-linux-2",
       "centos-7",
     ]
   end
