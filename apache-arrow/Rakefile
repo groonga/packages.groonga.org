@@ -29,8 +29,13 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
     end
   end
 
-  def apt_targets
+  def apt_targets_default
     [
+      # We want to remove debian-bookworm because we want to use the
+      # official Apache Arrow APT repository. But we keep this only
+      # for Zulip. Zulip uses packages.groonga.org temporary when the
+      # official Apache Arrow APT repository was down.
+      "debian-bookworm",
       "debian-bullseye",
       "ubuntu-focal",
     ]
@@ -53,7 +58,7 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
     false
   end
 
-  def yum_targets
+  def yum_targets_default
     [
       "almalinux-8",
       "centos-7",
