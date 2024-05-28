@@ -29,7 +29,7 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
     end
   end
 
-  def apt_targets_default
+  def apt_targets
     [
       # We want to remove debian-bookworm because we want to use the
       # official Apache Arrow APT repository. But we keep this only
@@ -58,7 +58,7 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
     false
   end
 
-  def yum_targets_default
+  def yum_targets
     [
       "almalinux-8",
       "centos-7",
