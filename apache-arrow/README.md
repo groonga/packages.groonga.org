@@ -2,9 +2,11 @@
 
 Groonga depends on Apache Arrow. However, the official Apache Arrow repository has been unstable at times, causing issues for Groonga users. To resolve this situation, we have been providing a mirrored version for Groonga users.
 
-Going forward, we plan to discontinue the mirror except in the following cases.
-- Packages that depend on the mirrored Apache Arrow (e.x. AlamaLinux 8).
-- When there are requests from specific Groonga users (such as Zulip).
+#### Note
+
+We would like to stop mirroring the Apache Arrow repository.
+Therefore, we intend to stop mirroring once the Apache Arrow repository is stable.
+
 
 ### How to version up
 
