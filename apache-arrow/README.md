@@ -1,3 +1,15 @@
+### Why we mirror Apache Arrow
+
+Groonga depends on Apache Arrow.
+However, the official Apache Arrow repository has been unstable at times, causing issues for Groonga users.
+See also the Apache Arrow issue: https://github.com/apache/arrow/issues/40744
+To resolve this situation, we have been providing a mirrored version for Groonga users.
+
+#### Note
+
+We would like to stop mirroring the Apache Arrow repository.
+Therefore, we intend to stop mirroring once the Apache Arrow repository is stable.
+
 ### How to version up
 
 1. Update Apache Arrow version and release data in Rakefile
