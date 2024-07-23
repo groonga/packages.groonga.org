@@ -36,7 +36,6 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
       # for Zulip. Zulip uses packages.groonga.org temporary when the
       # official Apache Arrow APT repository was down.
       "debian-bookworm",
-      "debian-bullseye",
       "ubuntu-focal",
     ]
   end
