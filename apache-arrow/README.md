@@ -7,7 +7,6 @@ Groonga depends on Apache Arrow. However, the official Apache Arrow repository h
 We would like to stop mirroring the Apache Arrow repository.
 Therefore, we intend to stop mirroring once the Apache Arrow repository is stable.
 
-
 ### How to version up
 
 1. Update Apache Arrow version and release data in Rakefile
