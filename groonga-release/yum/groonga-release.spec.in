@@ -1,12 +1,7 @@
 # -*- sh-shell: rpm -*-
 
-%if %{rhel} >= 8
-  %define disable_repository() (dnf config-manager --disable %1)
-  %define enable_repository() (dnf config-manager --enable %1)
-%else
-  %define disable_repository() (yum-config-manager --disable %1)
-  %define enable_repository() (yum-config-manager --enable %1)
-%endif
+%define _amzn %{?amzn:%{amzn}}%{!?amzn:0}
+%define is_amazon_linux (%{_amzn} != 0)
 
 Summary: Groonga release files
 Name: groonga-release
@@ -17,12 +12,10 @@ URL: https://packages.groonga.org/
 Source: %{name}-%{version}.tar.gz
 Group: System Environment/Base
 BuildArchitectures: noarch
+%if ! %{is_amazon_linux}
 Requires: epel-release
-%if %{rhel} >= 8
-Requires: dnf-command(config-manager)
-%else
-Requires: yum-utils
 %endif
+Requires: dnf-command(config-manager)
 
 %description
 Groonga release files
@@ -54,25 +47,11 @@ mkdir -p %{buildroot}%{_sysconfdir}/yum.repos.d/
 %post
 
 if grep -q 'Amazon Linux' /etc/os-release 2>/dev/null; then
-  %{disable_repository groonga-almalinux}
-  %{enable_repository groonga-amazon-linux}
-  %{disable_repository groonga-centos}
-  %{disable_repository groonga-oracle-linux}
-elif grep -q 'CentOS' /etc/os-release 2>/dev/null; then
-  %{disable_repository groonga-almalinux}
-  %{disable_repository groonga-amazon-linux}
-  %{enable_repository groonga-centos}
-  %{disable_repository groonga-oracle-linux}
-elif grep -q 'Oracle Linux' /etc/os-release 2>/dev/null; then
-  %{disable_repository groonga-almalinux}
-  %{disable_repository groonga-amazon-linux}
-  %{disable_repository groonga-centos}
-  %{enable_repository groonga-oracle-linux}
+  dnf config-manager --disable groonga-almalinux
+  dnf config-manager --enable groonga-amazon-linux
 else
-  %{enable_repository groonga-almalinux}
-  %{disable_repository groonga-amazon-linux}
-  %{disable_repository groonga-centos}
-  %{disable_repository groonga-oracle-linux}
+  dnf config-manager --enable groonga-almalinux
+  dnf config-manager --disable groonga-amazon-linux
 fi
 
 %changelog

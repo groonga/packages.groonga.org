@@ -1,4 +1,4 @@
-FROM oraclelinux:8
+FROM amazonlinux:2023
 
 ARG DEBUG
 

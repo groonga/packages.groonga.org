@@ -46,23 +46,9 @@ class GroongaReleasePackageTask < PackagesGroongaOrgPackageTask
       },
       {
         id: "amazon-linux",
-        label: "Amazon Linux 2",
+        label: "Amazon Linux 2023",
         distribution: "amazon-linux",
-        version: "2",
-        enabled: "0",
-      },
-      {
-        id: "centos",
-        label: "CentOS $releasever",
-        distribution: "centos",
-        version: "$releasever",
-        enabled: "0",
-      },
-      {
-        id: "oracle-linux",
-        label: "Oracle Linux $releasever",
-        distribution: "oracle-linux",
-        version: "$releasever",
+        version: "2023",
         enabled: "0",
       },
     ]
@@ -106,10 +92,7 @@ enabled=#{target[:enabled]}
     [
       "almalinux-8",
       "almalinux-9",
-      "amazon-linux-2",
-      "centos-7",
-      "oracle-linux-8",
-      "oracle-linux-9",
+      "amazon-linux-2023",
     ]
   end
 
@@ -128,6 +111,23 @@ enabled=#{target[:enabled]}
           "Packages",
           "#{@package}-#{@rpm_version}-#{@rpm_release}.noarch.rpm",
         ].join("/")
+
+        aarch64_rpm = [
+          yum_dir,
+          "repositories",
+          distribution,
+          version,
+          "aarch64",
+          "Packages",
+          "#{@package}-#{@rpm_version}-#{@rpm_release}.noarch.rpm",
+        ].join("/")
+        aarch64_dir = File.dirname(aarch64_rpm)
+        directory aarch64_dir
+        file aarch64_rpm => [rpm, aarch64_dir] do
+          cp(rpm, aarch64_rpm)
+        end
+        task :aarch64 => aarch64_rpm
+
         latest_rpm = [
           yum_dir,
           "repositories",
@@ -140,6 +140,7 @@ enabled=#{target[:enabled]}
         end
         task :latest => latest_rpm
       end
+      task :release => :aarch64
       task :release => :latest
     end
   end
