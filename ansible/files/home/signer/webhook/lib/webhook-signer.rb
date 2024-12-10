@@ -1,0 +1,1 @@
+require "webhook-signer/app"
