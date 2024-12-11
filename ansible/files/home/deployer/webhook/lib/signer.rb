@@ -1,1 +1,1 @@
-require "signer/app"
+require_relative "signer/app"
