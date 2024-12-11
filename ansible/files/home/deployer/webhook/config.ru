@@ -5,6 +5,6 @@ lib_dir = base_dir + "lib"
 
 $LOAD_PATH.unshift(lib_dir.to_s)
 
-require "webhook-signer"
+require "signer"
 
-run WebhookSigner::App.new
+run Signer::App.new
