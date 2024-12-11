@@ -1,3 +1,3 @@
-require_relative "lib/signer"
+require_relative "lib/deployer"
 
-run Signer::App.new
+run Deployer::App.new
