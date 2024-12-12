@@ -31,12 +31,12 @@ module Deployer
     def process(request, response)
       unless request.post?
         response.set(:method_not_allowed, "must POST")
-        return nil
+        return
       end
 
       unless valid_signature?(request)
         response.set(:unauthorized, "Authorization failed")
-        return nil
+        return
       end
     end
 
