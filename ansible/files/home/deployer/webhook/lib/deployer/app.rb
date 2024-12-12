@@ -34,13 +34,13 @@ module Deployer
         return nil
       end
 
-      unless verify_signature(request)
+      unless valid_signature?(request)
         response.set(:unauthorized, "Authorization failed")
         return nil
       end
     end
 
-    def verify_signature(request)
+    def valid_signature?(request)
       signature = "sha256=" + OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
                                                       ENV["SECRET_TOKEN"],
                                                       request.body.read)
