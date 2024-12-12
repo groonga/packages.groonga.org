@@ -22,7 +22,8 @@ module Deployer
     def call(env)
       request = Rack::Request.new(env)
       response = Response.new
-      process(request, response) or response.finish
+      process(request, response)
+      response.finish
     end
 
     private
@@ -37,8 +38,6 @@ module Deployer
         response.set(:unauthorized, "Authorization failed")
         return nil
       end
-
-      response.finish
     end
 
     def verify_signature(request)
