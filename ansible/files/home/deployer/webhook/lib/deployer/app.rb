@@ -42,10 +42,10 @@ module Deployer
     end
 
     def verify_signature(request)
-      signature = 'sha256=' + OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'),
-                                                      ENV['SECRET_TOKEN'],
+      signature = "sha256=" + OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
+                                                      ENV["SECRET_TOKEN"],
                                                       request.body.read)
-      Rack::Utils.secure_compare(signature, request.env['HTTP_X_HUB_SIGNATURE_256'])
+      Rack::Utils.secure_compare(signature, request.env["HTTP_X_HUB_SIGNATURE_256"])
     end
   end
 end
