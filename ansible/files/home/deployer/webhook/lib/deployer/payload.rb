@@ -73,7 +73,7 @@ module Deployer
     private
 
     def workflow_tag?
-      return if branch
+      return false unless branch
       branch.match?(/^v\d+(\.\d+){2}$/)
     end
   end
