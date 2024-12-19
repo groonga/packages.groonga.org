@@ -98,13 +98,7 @@ module Deployer
     def process_release(request, response, payload)
       response.finish do
         Thread.new do
-          gpg_key_id = "TODO: handle a GPG key"
-          archive = Deployer::SourceArchive.new(payload.repository_owner,
-                                                payload.repository_name,
-                                                payload.repository_name,
-                                                payload.version,
-                                                payload.branch)
-          archive.process(gpg_key_id)
+          # TODO: call rake tasks for sign packages.
         end
       end
     end
