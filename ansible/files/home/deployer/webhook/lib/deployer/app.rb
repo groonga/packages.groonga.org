@@ -36,7 +36,7 @@ module Deployer
           raise "must POST"
         end
         valid_signature!(request)
-        payload = parse_body(request, response)
+        payload = parse_body(request)
         process_payload(payload)
       rescue => e
         response.set(:bad_request, e.message)
@@ -53,7 +53,7 @@ module Deployer
       end
     end
 
-    def parse_body(request, response)
+    def parse_body(request)
       unless request.media_type == "application/json"
         raise "invalid payload format"
       end
