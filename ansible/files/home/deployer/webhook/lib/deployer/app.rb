@@ -62,25 +62,23 @@ module Deployer
         raise "invalid payload format"
       end
 
-      payload = request.body.read
-      if payload.nil?
-        raise "payload is missing"
+      body = request.body.read
+      if body.nil?
+        raise "request body is missing"
       end
 
       begin
-        JSON.parse(payload)
+        raw_payload = JSON.parse(body)
       rescue JSON::ParserError
         raise "invalid JSON format: <#{$!.message}>"
       end
-    end
-
-    def process_payload(request, response, raw_payload)
       metadata = {
         "x-github-event" => request.env["HTTP_X_GITHUB_EVENT"]
       }
+      Payload.new(raw_payload, metadata)
+    end
 
-      payload = Payload.new(raw_payload, metadata)
-
+    def process_payload(request, response, payload)
       case payload.event_name
       when "ping"
         # Do nothing because this is a kind of healthcheck.
