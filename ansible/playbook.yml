@@ -1,6 +1,9 @@
 - hosts: package_servers
   vars:
     groonga_admin_version: 0.9.5
+    ruby: ruby3.2
+    ruby_api_version: 3.2.0
+    passenger_version: 6.0.24
   vars_files:
     - vars/private.yml
   become: yes
@@ -24,6 +27,7 @@
           - logrotate
           - lv
           - ruby
+          - ruby-dev
           - systemd-timesyncd
           - unattended-upgrades
           - vim
@@ -162,10 +166,38 @@
         - post/start-apache2
 
     # Apache
-    - name: Install Apache
+    - name: Install Apache and related packages
       apt:
         name:
           - apache2
+          - apache2-dev
+          - libapr1-dev
+          - libaprutil1-dev
+          - libcurl4-openssl-dev
+          - libssl-dev
+          - zlib1g-dev
+    - name: Install Passenger
+      gem:
+        name: passenger
+        version: "{{ passenger_version }}"
+        user_install: no
+      register: passenger
+    - name: Build Passenger
+      command: passenger-install-apache2-module --languages ruby --auto
+      when: passenger.changed
+    - name: Put Passenger configuration files
+      template:
+        src: etc/apache2/mods-available/{{ item }}.jinja
+        dest: /etc/apache2/mods-available/{{ item }}
+      with_items:
+        - passenger.conf
+        - passenger.load
+      register: passenger_config_files
+    - name: Enable Passenger
+      command: a2enmod passenger
+      notify:
+        - Restart Apache
+      when: passenger_config_files.changed
     - name: Put Apache configuration
       copy:
         src: "{{ item }}"
