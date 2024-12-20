@@ -26,12 +26,12 @@ module Deployer
       write(message)
     end
 
-    def set_finish_proc(&block)
-      @proc = block
+    def set_finish_proc(proc)
+      @proc = proc
     end
 
     def finish
-      super(@proc)
+      super(&@proc)
     end
   end
 end
