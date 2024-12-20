@@ -69,6 +69,7 @@ module Deployer
       rescue JSON::ParserError
         raise "invalid JSON format: <#{$!.message}>"
       end
+
       metadata = {
         "x-github-event" => request.env["HTTP_X_GITHUB_EVENT"]
       }
