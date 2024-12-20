@@ -19,6 +19,7 @@ require_relative "tasks/repository-task"
 require_relative "tasks/source-archive-task"
 
 release = Release.new
+release.gpg_key_id = "2701F317CFCCCB975CADE9C2624CF77434839225"
 source_archive_task = SourceArchiveTask.new(release)
 source_archive_task.define
 repository_task = RepositoryTask.new(release, File.expand_path(__dir__))

@@ -8,5 +8,6 @@
 /*/yum/repositories/
 /*/yum/tmp/
 /Gemfile.lock
+/ansible/password
 /ansible/playbook.retry
 /repositories/

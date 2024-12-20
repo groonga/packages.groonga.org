@@ -1,6 +1,8 @@
 - hosts: package_servers
   vars:
     groonga_admin_version: 0.9.5
+  vars_files:
+    - vars/private.yml
   become: yes
   tasks:
     # Base
@@ -17,6 +19,7 @@
           - bundler
           - gh
           - git
+          - gpg
           - iotop
           - logrotate
           - lv
@@ -107,6 +110,21 @@
         bundle config bin bin
         bundle config path vendor/bundle
         bundle install
+      args:
+        chdir: ~packages/
+      vars:
+        ansible_ssh_pipelining: true
+    - name: Put ~packages/gpg-key.asc
+      template:
+        src: home/packages/gpg-key.asc.jinja
+        dest: ~packages/gpg-key.asc
+        owner: packages
+        group: packages
+        mode: 0600
+    - name: Import GPG key
+      become_user: packages
+      shell: |
+        gpg --import < gpg-key.asc
       args:
         chdir: ~packages/
       vars:
