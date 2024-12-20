@@ -8,11 +8,6 @@
       copy:
         content: "{{ inventory_hostname }}"
         dest: /etc/hostname
-    - name: Upgrade packages
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
-        upgrade: safe
     - name: Install base packages
       apt:
         name:
