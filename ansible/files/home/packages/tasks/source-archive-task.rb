@@ -41,16 +41,33 @@ class SourceArchiveTask
   end
 
   private
-  def download(dir)
-    base_name = "#{@package}-#{@version}"
+  def target_assets
+    base_name = "#{@release.package}-#{@release.version}"
+    archive_assets = {}
+    sign_file_names = []
     @github_client.release(@release.tag)["assets"].each do |asset|
       file_name = asset["name"]
       case file_name
       when "#{base_name}.tar.gz", "#{base_name}.zip"
-        File.open(File.join(dir, file_name), "wb") do |output|
-          URI(asset["browser_download_url"]).open do |input|
-            IO.copy_stream(input, output)
-          end
+        archive_assets[file_name] = asset
+      when /\.asc\z/
+        sign_file_names << file_name
+      end
+    end
+    sign_file_names.each do |sign_file_name|
+      signed_file_name = sign_file_name.gsub(/\.asc\z/, "")
+      archive_assets.delete(signed_file_name)
+    end
+    archive_assets.values
+  end
+
+  def download(dir)
+    base_name = "#{@package}-#{@version}"
+    target_assets.each do |asset|
+      file_name = asset["name"]
+      File.open(File.join(dir, file_name), "wb") do |output|
+        URI(asset["browser_download_url"]).open do |input|
+          IO.copy_stream(input, output)
         end
       end
     end
