@@ -41,7 +41,7 @@ module Deployer
       end
 
       begin
-        payload = parse_payload(request, response)
+        payload = parse_body(request, response)
       rescue => e
         response.set(:bad_request, e.message)
       end
@@ -57,7 +57,7 @@ module Deployer
       Rack::Utils.secure_compare(signature, request.env["HTTP_X_HUB_SIGNATURE_256"])
     end
 
-    def parse_payload(request, response)
+    def parse_body(request, response)
       unless request.media_type == "application/json"
         raise "invalid payload format"
       end
