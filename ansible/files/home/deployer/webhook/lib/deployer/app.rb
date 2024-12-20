@@ -24,7 +24,8 @@ module Deployer
     def call(env)
       request = Rack::Request.new(env)
       response = Response.new
-      process(request, response) || response.finish
+      process(request, response)
+      response.finish
     end
 
     private
@@ -39,7 +40,6 @@ module Deployer
         process_payload(request, response, payload)
       rescue => e
         response.set(:bad_request, e.message)
-        return
       end
     end
 
@@ -90,7 +90,7 @@ module Deployer
     end
 
     def process_release(request, response, payload)
-      response.finish do
+      response.set_finish_proc do
         Thread.new do
           # TODO: call rake tasks for sign packages.
         end
