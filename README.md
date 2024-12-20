@@ -12,3 +12,10 @@ This repository is for packages.groonga.org.
     % sudo apt install -V vagrant ansible
     % bundle install
     % rake
+
+## License
+
+* Codes in `ansible/files/home/`: GPLv3+
+* Others: CC0-1.0
+
+See `COPYING` for GPLv3+ and `LICENSE` for CC0-1.0.
