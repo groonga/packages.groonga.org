@@ -35,7 +35,7 @@ module Deployer
         unless request.post?
           raise "must POST"
         end
-        valid_signature?(request)
+        valid_signature!(request)
         payload = parse_body(request, response)
         process_payload(request, response, payload)
       rescue => e
