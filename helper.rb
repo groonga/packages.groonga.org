@@ -8,10 +8,14 @@ module Helper
       "groonga"
     end
 
+    # This must be synced with
+    # ansible/files/home/packages/tasks/repository-task.rb
     def repository_label
       "The Groonga Project"
     end
 
+    # This must be synced with
+    # ansible/files/home/packages/tasks/repository-task.rb
     def repository_description
       "Groonga related packages"
     end

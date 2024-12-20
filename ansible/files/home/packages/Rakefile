@@ -15,8 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+require_relative "tasks/repository-task"
 require_relative "tasks/source-archive-task"
 
 release = Release.new
-task = SourceARchiveTask.new(release)
-task.define
+source_archive_task = SourceArchiveTask.new(release)
+source_archive_task.define
+repository_task = RepositoryTask.new(release, File.expand_path(__dir__))
+repository_task.define
