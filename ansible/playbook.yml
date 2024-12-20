@@ -14,6 +14,8 @@
           - apt-listchanges
           - apt-transport-https
           - apticron
+          - bundler
+          - gh
           - git
           - iotop
           - logrotate
@@ -61,6 +63,7 @@
       with_items:
         - bin/
         - public/
+        - tasks/
     - name: Put ~packages/.forward
       copy:
         content: "packages@groonga.org"
@@ -81,6 +84,33 @@
         owner: packages
         group: packages
         mode: 0600
+    - name: Put ~packages/Rakefile and related files
+      copy:
+        src: home/packages/{{ item }}
+        dest: ~packages/{{ item }}
+        owner: packages
+        group: packages
+      with_items:
+        - Gemfile
+        - Rakefile
+        - tasks/github-client.rb
+        - tasks/release.rb
+        - tasks/repository-task.rb
+        - tasks/source-archive-task.rb
+    - name: Remove Gemfile.lock
+      file:
+        path: ~packages/Gemfile.lock
+        state: absent
+    - name: Update gems
+      become_user: packages
+      shell: |
+        bundle config bin bin
+        bundle config path vendor/bundle
+        bundle install
+      args:
+        chdir: ~packages/
+      vars:
+        ansible_ssh_pipelining: true
 
     # Let's encrypt
     - name: Install certbot
