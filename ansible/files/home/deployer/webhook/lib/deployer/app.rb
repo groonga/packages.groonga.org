@@ -41,8 +41,12 @@ module Deployer
         return
       end
 
-      payload = parse_payload(request, response)
-      return if payload.nil?
+      begin
+        payload = parse_payload(request, response)
+      rescue => e
+        response.set(:bad_request, e.message)
+      end
+
       process_payload(request, response, payload)
     end
 
@@ -56,21 +60,18 @@ module Deployer
 
     def parse_payload(request, response)
       unless request.media_type == "application/json"
-        response.set(:bad_request, "invalid payload format")
-        return
+        raise "invalid payload format"
       end
 
       payload = request.body.read
       if payload.nil?
-        response.set(:bad_request, "payload is missing")
-        return
+        raise "payload is missing"
       end
 
       begin
         JSON.parse(payload)
       rescue JSON::ParserError
-        response.set(:bad_request, "invalid JSON format: <#{$!.message}>")
-        nil
+        raise "invalid JSON format: <#{$!.message}>"
       end
     end
 
