@@ -30,17 +30,11 @@ module Deployer
     private
 
     def process(request, response)
-      unless request.post?
-        response.set(:method_not_allowed, "must POST")
-        return
-      end
-
-      unless valid_signature?(request)
-        response.set(:unauthorized, "Authorization failed")
-        return
-      end
-
       begin
+        unless request.post?
+          raise "must POST"
+        end
+        valid_signature?(request)
         payload = parse_body(request, response)
         process_payload(request, response, payload)
       rescue => e
@@ -54,7 +48,10 @@ module Deployer
                                             ENV["SECRET_TOKEN"],
                                             request.body.read)
       signature = "sha256=#{hmac_sha256}"
-      Rack::Utils.secure_compare(signature, request.env["HTTP_X_HUB_SIGNATURE_256"])
+      unless Rack::Utils.secure_compare(signature, request.env["HTTP_X_HUB_SIGNATURE_256"])
+        raise "Authorization failed"
+        return
+      end
     end
 
     def parse_body(request, response)
