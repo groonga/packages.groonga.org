@@ -18,7 +18,6 @@ require "json"
 require "openssl"
 require_relative "payload"
 require_relative "response"
-require_relative "source-archive"
 
 module Deployer
   class App
