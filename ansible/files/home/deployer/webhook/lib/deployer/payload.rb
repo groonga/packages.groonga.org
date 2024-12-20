@@ -51,7 +51,7 @@ module Deployer
     end
 
     def version
-      return nil unless workflow_tag?
+      return unless workflow_tag?
       branch.delete_prefix("v")
     end
 
