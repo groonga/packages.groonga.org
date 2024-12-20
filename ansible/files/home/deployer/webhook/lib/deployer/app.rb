@@ -42,11 +42,11 @@ module Deployer
 
       begin
         payload = parse_body(request, response)
+        process_payload(request, response, payload)
       rescue => e
         response.set(:bad_request, e.message)
+        return
       end
-
-      process_payload(request, response, payload)
     end
 
     def valid_signature?(request)
@@ -89,9 +89,7 @@ module Deployer
         return unless payload.released?
         process_release(request, response, payload)
       else
-        response.set(:bad_request,
-                     "Unsupported event: <#{payload.event_name}>")
-        nil
+        raise "Unsupported event: <#{payload.event_name}>"
       end
     end
 
