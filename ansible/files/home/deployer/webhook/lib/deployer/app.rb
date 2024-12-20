@@ -89,11 +89,10 @@ module Deployer
     end
 
     def process_release(request, response, payload)
-      response.set_finish_proc do
-        Thread.new do
-          # TODO: call rake tasks for sign packages.
-        end
+      release_tasks = Proc.new do
+        # TODO: call rake tasks for sign packages.
       end
+      response.set_finish_proc(release_tasks)
     end
   end
 end
