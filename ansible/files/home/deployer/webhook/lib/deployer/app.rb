@@ -33,7 +33,7 @@ module Deployer
     def process(request, response)
       begin
         unless request.post?
-          raise "must POST"
+          raise RequestError.new(:method_not_allowed, "must POST")
         end
         verify_signature!(request)
         payload = parse_body(request)
@@ -49,24 +49,24 @@ module Deployer
                                             request.body.read)
       signature = "sha256=#{hmac_sha256}"
       unless Rack::Utils.secure_compare(signature, request.env["HTTP_X_HUB_SIGNATURE_256"])
-        raise "Authorization failed"
+        raise RequestError.new(:unauthorized, "Authorization failed")
       end
     end
 
     def parse_body(request)
       unless request.media_type == "application/json"
-        raise "invalid payload format"
+        raise RequestError.new(:bad_request, "invalid payload format")
       end
 
       body = request.body.read
       if body.nil?
-        raise "request body is missing"
+        raise RequestError.new(:bad_request, "request body is missing")
       end
 
       begin
         raw_payload = JSON.parse(body)
       rescue JSON::ParserError
-        raise "invalid JSON format: <#{$!.message}>"
+        raise RequestError.new(:bad_request, "invalid JSON format: <#{$!.message}>")
       end
 
       metadata = {
@@ -84,7 +84,7 @@ module Deployer
         return unless payload.released?
         deploy(payload, response)
       else
-        raise "Unsupported event: <#{payload.event_name}>"
+        raise RequestError.new(:bad_request, "Unsupported event: <#{payload.event_name}>")
       end
     end
 
