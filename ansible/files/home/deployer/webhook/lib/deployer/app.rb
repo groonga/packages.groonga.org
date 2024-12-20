@@ -50,7 +50,6 @@ module Deployer
       signature = "sha256=#{hmac_sha256}"
       unless Rack::Utils.secure_compare(signature, request.env["HTTP_X_HUB_SIGNATURE_256"])
         raise "Authorization failed"
-        return
       end
     end
 
