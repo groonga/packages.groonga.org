@@ -82,13 +82,13 @@ module Deployer
         nil
       when "workflow_run"
         return unless payload.released?
-        deploy_release(payload, response)
+        process_deploy(payload, response)
       else
         raise "Unsupported event: <#{payload.event_name}>"
       end
     end
 
-    def deploy_release(payload, response)
+    def process_deploy(payload, response)
       release_tasks = Proc.new do
         # TODO: call rake tasks for sign packages.
       end
