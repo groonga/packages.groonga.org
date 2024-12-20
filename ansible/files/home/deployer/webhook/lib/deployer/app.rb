@@ -36,26 +36,13 @@ module Deployer
         return
       end
 
-      unless request.media_type == "application/json"
-        response.set(:bad_request, "invalid payload format")
-        return
-      end
-
-      if request.body.read.nil?
-        response.set(:bad_request, "payload is missing")
-        return
-      end
-
       unless valid_signature?(request)
         response.set(:unauthorized, "Authorization failed")
         return
       end
 
-      payload = parse_payload(request.body.read, response)
-      if payload.nil?
-        response.set(:bad_request, "invalid JSON format: <#{$!.message}>")
-        return
-      end
+      payload = parse_payload(request, response)
+      return if payload.nil?
       process_payload(request, response, payload)
     end
 
@@ -67,10 +54,22 @@ module Deployer
       Rack::Utils.secure_compare(signature, request.env["HTTP_X_HUB_SIGNATURE_256"])
     end
 
-    def parse_payload(payload, response)
+    def parse_payload(request, response)
+      unless request.media_type == "application/json"
+        response.set(:bad_request, "invalid payload format")
+        return
+      end
+
+      payload = request.body.read
+      if payload.nil?
+        response.set(:bad_request, "payload is missing")
+        return
+      end
+
       begin
         JSON.parse(payload)
       rescue JSON::ParserError
+        response.set(:bad_request, "invalid JSON format: <#{$!.message}>")
         nil
       end
     end
