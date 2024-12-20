@@ -43,7 +43,7 @@ module Deployer
       end
     end
 
-    def valid_signature?(request)
+    def valid_signature!(request)
       hmac_sha256 = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
                                             ENV["SECRET_TOKEN"],
                                             request.body.read)
