@@ -111,8 +111,8 @@ class RepositoryTask
   end
 
   class State
-    def initialize(base_dir, id)
-      @state_dir = base_dir + "state" + id
+    def initialize(base_dir, package, version, id)
+      @state_dir = base_dir + "state" + package + version + id
       @state_dir.mkpath
       @done_path = @state_dir + "done"
       @lock_path = @state_dir + "lock"
@@ -155,7 +155,10 @@ class RepositoryTask
       desc "Deploy repositories"
       task :repositories do
         target_assets.each do |target, assets|
-          state = State.new(@base_dir, target)
+          state = State.new(@base_dir,
+                            @release.package,
+                            @release.version,
+                            target)
           next if state.done?
 
           state.lock do
