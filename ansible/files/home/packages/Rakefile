@@ -15,14 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+require_relative "tasks/archive-task"
 require_relative "tasks/repository-task"
-require_relative "tasks/source-archive-task"
 
 release = Release.new
 release.gpg_key_id = "2701F317CFCCCB975CADE9C2624CF77434839225"
 release.base_dir = Pathname(__dir__).expand_path
 release.public_dir = release.base_dir + "public"
-source_archive_task = SourceArchiveTask.new(release)
-source_archive_task.define
+archive_task = ArchiveTask.new(release)
+archive_task.define
 repository_task = RepositoryTask.new(release)
 repository_task.define

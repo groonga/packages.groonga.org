@@ -19,7 +19,7 @@ require_relative "github-client"
 require_relative "release"
 require_relative "state"
 
-class SourceArchiveTask
+class ArchiveTask
   include Rake::DSL
 
   def initialize(release)
@@ -30,14 +30,30 @@ class SourceArchiveTask
 
   def define
     namespace :deploy do
-      desc "Deploy source archive"
-      task :source_archive do
-        target_assets.each do |asset|
-          extension = asset["name"].delete_prefix("#{@release.base_name}.")
+      desc "Deploy archives"
+      task :archives do
+        target_assets.each do |type, asset|
+          base_name = asset["name"]
+          if type == "source"
+            # groonga-14.1.1.tar.gz -> tar.gz
+            # groonga-14.1.1.zip    -> zip
+            extension = base_name.delete_prefix("#{@release.base_name}.")
+            state_id = "source-#{extension}"
+          else
+            # groonga-14.1.1-x64-vs2019-with-vcruntime.zip ->
+            # x64-vs2019-with-vcruntime
+            #
+            # groonga-14.1.1-x64-vs2022.zip ->
+            # x64-vs2022
+            binary_type = base_name.
+                            delete_prefix("#{@release.base_name}-").
+                            delete_suffix(".zip")
+            state_id = "windows-#{binary_type}"
+          end
           state = State.new(@release.base_dir,
                             @release.package,
                             @release.version,
-                            "source-#{extension}")
+                            state_id)
           next if state.done?
 
           state.lock do
@@ -47,7 +63,7 @@ class SourceArchiveTask
               upload(dir)
             end
 
-            update_htaccess(asset)
+            update_htaccess(type, asset)
             state.done
           end
         end
@@ -57,22 +73,33 @@ class SourceArchiveTask
 
   private
   def target_assets
-    archive_assets = {}
+    source_archive_assets = {}
+    windows_binary_assets = {}
     sign_file_names = []
     @github_client.release(@release.tag)["assets"].each do |asset|
       file_name = asset["name"]
       case file_name
       when "#{@release.base_name}.tar.gz", "#{@release.base_name}.zip"
-        archive_assets[file_name] = asset
+        source_archive_assets[file_name] = asset
+      when /\A#{Regexp.escape(@release.base_name)}-.+\.zip\z/
+        windows_binary_assets[file_name] = asset
       when /\.asc\z/
         sign_file_names << file_name
       end
     end
     sign_file_names.each do |sign_file_name|
       signed_file_name = sign_file_name.gsub(/\.asc\z/, "")
-      archive_assets.delete(signed_file_name)
+      source_archive_assets.delete(signed_file_name)
+      windows_binary_assets.delete(signed_file_name)
     end
-    archive_assets.values
+    assets = []
+    source_archive_assets.values.each do |asset|
+      assets << ["source", asset]
+    end
+    windows_binary_assets.values.each do |asset|
+      assets << ["windows", asset]
+    end
+    assets
   end
 
   def download(dir, asset)
@@ -109,14 +136,14 @@ class SourceArchiveTask
        *paths)
   end
 
-  def update_htaccess(asset)
-    htaccess_path =
-      @release.public_dir + "source" + @release.package + ".htaccess"
+  def update_htaccess(type, asset)
+    htaccess_path = @release.public_dir + type + @release.package + ".htaccess"
     return unless htaccess_path.exist?
 
     base_name = asset["name"]
-    extension = base_name.delete_prefix("#{@release.base_name}.")
-    latest_base_name = "#{@release.package}-latest.#{extension}"
+    latest_base_name = base_name.gsub(/\A#{Regexp.escape(@release.base_name)}/) do
+      "#{@release.package}-latest"
+    end
     htaccess_content = ""
     htaccess_path.open do |htaccess|
       htaccess.each_line do |line|
