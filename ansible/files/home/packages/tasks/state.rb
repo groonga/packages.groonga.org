@@ -1,5 +1,3 @@
-# -*- ruby -*-
-#
 # Copyright (C) 2024  Sutou Kouhei <kou@clear-code.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,14 +13,36 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-require_relative "tasks/repository-task"
-require_relative "tasks/source-archive-task"
+class State
+  def initialize(base_dir, package, version, id)
+    @state_dir = base_dir + "state" + package + version + id
+    @state_dir.mkpath
+    @done_path = @state_dir + "done"
+    @lock_path = @state_dir + "lock"
+  end
 
-release = Release.new
-release.gpg_key_id = "2701F317CFCCCB975CADE9C2624CF77434839225"
-release.base_dir = Pathname(__dir__).expand_path
-release.public_dir = release.base_dir + "public"
-source_archive_task = SourceArchiveTask.new(release)
-source_archive_task.define
-repository_task = RepositoryTask.new(release)
-repository_task.define
+  def done?
+    @done_path.exist?
+  end
+
+  def done
+    @done_path.open("w") do
+      # Just create
+    end
+  end
+
+  def lock
+    lock_path = @state_dir + "lock"
+    begin
+      lock_path.open(File::CREAT | File::EXCL | File::WRONLY) do
+        yield
+      end
+    ensure
+      begin
+        lock_path.unlink
+      rescue SystemCallError
+      end
+    end
+  end
+end
+

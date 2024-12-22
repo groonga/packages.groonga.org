@@ -18,7 +18,11 @@ Release = Struct.new(:github_owner,
                      :package,
                      :version,
                      :tag,
-                     :gpg_key_id) do
+                     :gpg_key_id,
+                     # Must be Pathname
+                     :base_dir,
+                     # Must be Pathname
+                     :public_dir) do
   def github_owner
     ENV["GITHUB_OWNER"] || self[:github_owner]
   end
@@ -41,5 +45,9 @@ Release = Struct.new(:github_owner,
 
   def gpg_key_id
     ENV["GPG_KEY_ID"] || self[:gpg_key_id]
+  end
+
+  def base_name
+    "#{package}-#{version}"
   end
 end

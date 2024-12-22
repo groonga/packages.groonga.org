@@ -24,6 +24,7 @@ require "thread"
 require "apt-dists-merge"
 
 require_relative "release"
+require_relative "state"
 
 class RepositoryTask
   include Rake::DSL
@@ -116,42 +117,8 @@ class RepositoryTask
     end
   end
 
-  class State
-    def initialize(base_dir, package, version, id)
-      @state_dir = base_dir + "state" + package + version + id
-      @state_dir.mkpath
-      @done_path = @state_dir + "done"
-      @lock_path = @state_dir + "lock"
-    end
-
-    def done?
-      @done_path.exist?
-    end
-
-    def done
-      @done_path.open("w") do
-        # Just create
-      end
-    end
-
-    def lock
-      lock_path = @state_dir + "lock"
-      begin
-        lock_path.open(File::CREAT | File::EXCL | File::WRONLY) do
-          yield
-        end
-      ensure
-        begin
-          lock_path.unlink
-        rescue SystemCallError
-        end
-      end
-    end
-  end
-
-  def initialize(release, base_dir)
+  def initialize(release)
     @release = release
-    @base_dir = Pathname(base_dir).expand_path
     @github_client = GitHubClient.new(@release.github_owner,
                                       @release.github_repository)
   end
@@ -161,7 +128,7 @@ class RepositoryTask
       desc "Deploy repositories"
       task :repositories do
         target_assets.each do |target, asset|
-          state = State.new(@base_dir,
+          state = State.new(@release.base_dir,
                             @release.package,
                             @release.version,
                             target)
@@ -241,7 +208,7 @@ class RepositoryTask
   end
 
   def update_yum_repository(dir)
-    base_version_dir = @base_dir + "public" + dir.distribution + dir.version
+    base_version_dir = @release.public_dir + dir.distribution + dir.version
     dir.version_path.glob("*") do |arch_dir|
       next unless arch_dir.directory?
 
@@ -373,7 +340,7 @@ APT::FTPArchive::Release::Description "#{repository_description}";
     code_name = dir.version
     component = dir.component
 
-    current_distribution_dir = @base_dir + "public" + distribution
+    current_distribution_dir = @release.public_dir + distribution
 
     sh("rsync",
        "-av",

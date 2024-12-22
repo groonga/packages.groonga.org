@@ -17,6 +17,7 @@ require "tmpdir"
 
 require_relative "github-client"
 require_relative "release"
+require_relative "state"
 
 class SourceArchiveTask
   include Rake::DSL
@@ -31,10 +32,24 @@ class SourceArchiveTask
     namespace :deploy do
       desc "Deploy source archive"
       task :source_archive do
-        Dir.mktmpdir do |dir|
-          download(dir)
-          sign(dir)
-          upload(dir)
+        target_assets.each do |asset|
+          extension = asset["name"].delete_prefix("#{@release.base_name}.")
+          state = State.new(@release.base_dir,
+                            @release.package,
+                            @release.version,
+                            "source-#{extension}")
+          next if state.done?
+
+          state.lock do
+            Dir.mktmpdir do |dir|
+              download(dir, asset)
+              sign(dir)
+              upload(dir)
+            end
+
+            update_htaccess(asset)
+            state.done
+          end
         end
       end
     end
@@ -42,16 +57,15 @@ class SourceArchiveTask
 
   private
   def target_assets
-    base_name = "#{@release.package}-#{@release.version}"
     archive_assets = {}
     sign_file_names = []
     @github_client.release(@release.tag)["assets"].each do |asset|
       file_name = asset["name"]
       case file_name
-      when "#{base_name}.tar.gz", "#{base_name}.zip"
+      when "#{@release.base_name}.tar.gz", "#{@release.base_name}.zip"
         archive_assets[file_name] = asset
       when /\.asc\z/
-        sign_file_names << file_name
+        # sign_file_names << file_name
       end
     end
     sign_file_names.each do |sign_file_name|
@@ -61,14 +75,11 @@ class SourceArchiveTask
     archive_assets.values
   end
 
-  def download(dir)
-    base_name = "#{@package}-#{@version}"
-    target_assets.each do |asset|
-      file_name = asset["name"]
-      File.open(File.join(dir, file_name), "wb") do |output|
-        URI(asset["browser_download_url"]).open do |input|
-          IO.copy_stream(input, output)
-        end
+  def download(dir, asset)
+    file_name = asset["name"]
+    File.open(File.join(dir, file_name), "wb") do |output|
+      URI(asset["browser_download_url"]).open do |input|
+        IO.copy_stream(input, output)
       end
     end
   end
@@ -96,5 +107,31 @@ class SourceArchiveTask
        "--clobber",
        "--repo", repository,
        *paths)
+  end
+
+  def update_htaccess(asset)
+    htaccess_path =
+      @release.public_dir + "source" + @release.package + ".htaccess"
+    return unless htaccess_path.exist?
+
+    base_name = asset["name"]
+    extension = base_name.delete_prefix("#{@release.base_name}.")
+    latest_base_name = "#{@release.package}-latest.#{extension}"
+    htaccess_content = ""
+    htaccess_path.open do |htaccess|
+      htaccess.each_line do |line|
+        htaccess_content << line unless line.include?(latest_base_name)
+      end
+      url = asset["browser_download_url"]
+      [
+        base_name,
+        latest_base_name,
+      ].each do |target_base_name|
+        target = "/source/#{@release.package}/#{target_base_name}"
+        htaccess_content << "Redirect #{target} #{url}\n"
+        htaccess_content << "Redirect #{target}.asc #{url}.asc\n"
+      end
+    end
+    htaccess_path.write(htaccess_content)
   end
 end
