@@ -66,7 +66,7 @@ class RepositoryTask
     end
 
     def repository_type
-      case distribution_path
+      case distribution
       when "almalinux", "amazon-linux"
         "yum"
       when "debian", "ubuntu"
