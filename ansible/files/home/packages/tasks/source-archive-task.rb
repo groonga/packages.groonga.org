@@ -65,7 +65,7 @@ class SourceArchiveTask
       when "#{@release.base_name}.tar.gz", "#{@release.base_name}.zip"
         archive_assets[file_name] = asset
       when /\.asc\z/
-        # sign_file_names << file_name
+        sign_file_names << file_name
       end
     end
     sign_file_names.each do |sign_file_name|
