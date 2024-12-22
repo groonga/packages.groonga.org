@@ -59,53 +59,59 @@ class RepositoryTask
   class PackagesDir
     attr_reader :path
     def initialize(path)
-      # .../packages/
+      # .../almalinux-8/
+      # .../debian-bookworm/
       @path = Pathname(path)
     end
 
     def repository_type
-      # .../packages/apt -> apt
-      # .../packages/yum -> yum
-      @path.glob("*")[0].basename.to_s
+      case distribution_path
+      when "almalinux", "amazon-linux"
+        "yum"
+      when "debian", "ubuntu"
+        "apt"
+      else
+        nil
+      end
     end
 
     def distribution_path
-      # .../packages/apt/repositories/debian
-      # .../packages/yum/repositories/almalinux
-      @path.glob("*/repositories/*")[0]
+      # .../almalinux-8/almalinux
+      # .../debian-bookworm/debian
+      @path.glob("*")[0]
     end
 
     def distribution
-      # .../packages/apt/repositories/debian    -> debian
-      # .../packages/yum/repositories/almalinux -> almalinux
+      # .../almalinux-8/almalinux -> almalinux
+      # .../debian-bookworm/debian -> debian
       distribution_path.basename.to_s
     end
 
     def version_path
-      # .../packages/apt/repositories/debian/pool/bookworm
-      # .../packages/yum/repositories/almalinux/9
       if repository_type == "apt"
-        @path.glob("*/repositories/*/*/*")[0]
+        # .../debian-bookworm/debian/pool/bookworm
+        @path.glob("*/pool/*")[0]
       else
-        @path.glob("*/repositories/*/*")[0]
+        # .../almalinux-8/almalinux/8
+        @path.glob("*/*")[0]
       end
     end
 
     def version
-      # .../packages/apt/repositories/debian/pool/bookworm -> bookworm
-      # .../packages/yum/repositories/almalinux/9          -> 9
+      # .../almalinux-9/almalinux/9              -> 9
+      # .../debian-bookworm/debian/pool/bookworm -> bookworm
       version_path.basename.to_s
     end
 
     # This is only for repository_type == "apt"
     def component_path
-      # .../packages/apt/repositories/debian/pool/bookworm/main
+      # .../debian-bookworm/debian/pool/bookworm/main
       version_path.glob("*")[0]
     end
 
     # This is only for repository_type == "apt"
     def component
-      # .../packages/apt/repositories/debian/pool/bookworm/main -> main
+      # .../debian-bookworm/debian/pool/bookworm/main -> main
       component_path.basename.to_s
     end
   end
@@ -154,7 +160,7 @@ class RepositoryTask
     namespace :deploy do
       desc "Deploy repositories"
       task :repositories do
-        target_assets.each do |target, assets|
+        target_assets.each do |target, asset|
           state = State.new(@base_dir,
                             @release.package,
                             @release.version,
@@ -163,22 +169,25 @@ class RepositoryTask
 
           state.lock do
             Dir.mktmpdir do |dir|
-              assets.each do |asset|
-                url = asset["browser_download_url"]
-                packages_tar_gz = File.join(dir, File.basename(url))
-                File.open(packages_tar_gz, "wb") do |output|
-                  URI(url).open do |input|
-                    IO.copy_stream(input, output)
-                  end
+              url = asset["browser_download_url"]
+              packages_tar_gz = File.join(dir, File.basename(url))
+              File.open(packages_tar_gz, "wb") do |output|
+                URI(url).open do |input|
+                  IO.copy_stream(input, output)
                 end
-                sh("tar", "xf", packages_tar_gz, "-C", dir)
               end
+              # almalinux-9.tar.gz ->
+              #   almalinux-9/almalinux/9/...
+              # debian-bookworm.tar.gz ->
+              #   debian-bookworm/debian/pool/bookworm/...
+              sh("tar", "xf", packages_tar_gz, "-C", dir)
 
-              packages_dir = PackagesDir.new(File.join(dir, "packages"))
-              if packages_dir.repository_type == "yum"
+              packages_dir = PackagesDir.new(File.join(dir, target))
+              case packages_dir.repository_type
+              when "yum"
                 sign_rpms(packages_dir)
                 update_yum_repository(packages_dir)
-              else
+              when "apt"
                 sign_dscs(packages_dir)
                 update_apt_repository(packages_dir)
               end
@@ -203,34 +212,18 @@ class RepositoryTask
 
 
   def target_assets
-    package_assets = {}
-    repository_assets = {}
+    assets = {}
     @github_client.release(@release.tag)["assets"].each do |asset|
       file_name = asset["name"]
       case file_name
-      when /\Aalmalinux-/, /\Aamazon-linux-/, /\Adebian-/, /\Aubuntu-/
-        if file_name.end_with?("-repository.tar.gz")
-          repository_assets[file_name] = asset
-        else
-          package_assets[file_name] = asset
-        end
+      when /\A(?:almalinux|amazon-linux)-\d+\.tar\.gz/,
+           /\A(?:debian|ubuntu)-[a-z]+\.tar\.gz/
+        # almalinux-8.tar.gz ->
+        # almalinux-8
+        assets[File.basename(file_name, ".tar.gz")] = asset
       end
     end
-    package_assets.reject! do |file_name, _asset|
-      repository_assets.key?(file_name.gsub(/\.tar\.gz\z/, "-repository.tar.gz"))
-    end
-    grouped_package_assets = {}
-    package_assets.each do |file_name, asset|
-      # almalinux-8-aarch64.tar.gz -> almalinux-8
-      # almalinux-8-x86_64.tar.gz  -> almalinux-8
-      #
-      # debian-bookworm-amd64.tar.gz -> debian-bookworm
-      # debian-bookworm-arm64.tar.gz -> debian-bookworm
-      group_key = file_name.gsub(/-(?:aarch64|x86_64|arm64|amd64)\.tar\.gz\z/, "")
-      grouped_package_assets[group_key] ||= []
-      grouped_package_assets[group_key] << asset
-    end
-    grouped_package_assets
+    assets
   end
 
   def sign_rpms(dir)
@@ -239,9 +232,9 @@ class RepositoryTask
          "-D", "_gpg_name #{@release.gpg_key_id}",
          "-D", "__gpg_check_password_cmd /bin/true true",
          "--resign",
-         rpm)
+         rpm.to_s)
     end
-    Dir.glob("#{dir.path}/**/*.rpm") do |rpm|
+    dir.path.glob("**/*.rpm") do |rpm|
       thread_pool << rpm
     end
     thread_pool.join
@@ -288,11 +281,11 @@ class RepositoryTask
   end
 
   def sign_dscs(dir)
-    Dir.glob("#{dir.path}/**/*.dsc") do |dsc|
+    dir.path.glob("**/*.dsc") do |dsc|
       sh("debsign",
          "--no-re-sign",
          "-k#{@release.gpg_key_id}",
-         dsc)
+         dsc.to_s)
     end
   end
 
