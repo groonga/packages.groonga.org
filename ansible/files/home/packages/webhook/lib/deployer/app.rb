@@ -36,7 +36,6 @@ module Deployer
         unless request.post?
           raise RequestError.new(:method_not_allowed, "must POST")
         end
-        verify_signature!(request)
         payload = parse_body!(request)
         process_payload!(payload)
       rescue RequestError => request_error
@@ -46,10 +45,10 @@ module Deployer
       end
     end
 
-    def verify_signature!(request)
+    def verify_signature!(request, body)
       hmac_sha256 = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
                                             ENV["SECRET_TOKEN"],
-                                            request.body.read)
+                                            body)
       signature = "sha256=#{hmac_sha256}"
       unless Rack::Utils.secure_compare(signature, request.env["HTTP_X_HUB_SIGNATURE_256"])
         raise RequestError.new(:unauthorized, "Authorization failed")
@@ -65,6 +64,8 @@ module Deployer
       if body.nil?
         raise RequestError.new(:bad_request, "request body is missing")
       end
+
+      verify_signature!(request, body)
 
       begin
         raw_payload = JSON.parse(body)
