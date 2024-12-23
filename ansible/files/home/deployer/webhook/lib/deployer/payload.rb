@@ -17,7 +17,7 @@
 
 module Deployer
   class Payload
-    RELEASE_WORKFLOWS= ["Package"].map(&:freeze).freeze
+    RELEASE_WORKFLOWS= ["Package"].freeze
 
     def initialize(data, metadata={})
       @data = data
