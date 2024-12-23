@@ -25,13 +25,7 @@ module Deployer
     end
 
     def [](key)
-      key.split(".").inject(@data) do |current_data, current_key|
-        if current_data
-          current_data[current_key]
-        else
-          nil
-        end
-      end
+      @data.dig(*key.split("."))
     end
 
     def event_name
