@@ -72,8 +72,9 @@
         - public/
         - tasks/
         - webhook/lib/
-        - webhook/lib/deployer
+        - webhook/lib/deployer/
         - webhook/public/
+        - webhook/tmp/
     - name: Put ~packages/.forward
       copy:
         content: "packages@groonga.org"
@@ -142,6 +143,10 @@
       with_items:
         - .
         - webhook
+    - name: Restart webhook
+      file:
+        path: ~packages/webhook/tmp/restart.txt
+        state: touch
     - name: Put ~packages/gpg-key.asc
       template:
         src: home/packages/gpg-key.asc.jinja
