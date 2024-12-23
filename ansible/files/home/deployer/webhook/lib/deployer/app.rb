@@ -14,7 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+require "json"
 require "openssl"
+require_relative "payload"
 require_relative "response"
 
 module Deployer
@@ -29,23 +31,70 @@ module Deployer
     private
 
     def process(request, response)
-      unless request.post?
-        response.set(:method_not_allowed, "must POST")
-        return
-      end
-
-      unless valid_signature?(request)
-        response.set(:unauthorized, "Authorization failed")
-        return
+      begin
+        unless request.post?
+          raise RequestError.new(:method_not_allowed, "must POST")
+        end
+        verify_signature!(request)
+        payload = parse_body!(request)
+        process_payload!(payload)
+      rescue RequestError => request_error
+        response.set(request_error.status, request_error.message)
+      rescue => e
+        response.set(:internal_server_error, e.message)
       end
     end
 
-    def valid_signature?(request)
+    def verify_signature!(request)
       hmac_sha256 = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new("sha256"),
                                             ENV["SECRET_TOKEN"],
                                             request.body.read)
       signature = "sha256=#{hmac_sha256}"
-      Rack::Utils.secure_compare(signature, request.env["HTTP_X_HUB_SIGNATURE_256"])
+      unless Rack::Utils.secure_compare(signature, request.env["HTTP_X_HUB_SIGNATURE_256"])
+        raise RequestError.new(:unauthorized, "Authorization failed")
+      end
+    end
+
+    def parse_body!(request)
+      unless request.media_type == "application/json"
+        raise RequestError.new(:bad_request, "invalid payload format")
+      end
+
+      body = request.body.read
+      if body.nil?
+        raise RequestError.new(:bad_request, "request body is missing")
+      end
+
+      begin
+        raw_payload = JSON.parse(body)
+      rescue JSON::ParserError
+        raise RequestError.new(:bad_request, "invalid JSON format: <#{$!.message}>")
+      end
+
+      metadata = {
+        "x-github-event" => request.env["HTTP_X_GITHUB_EVENT"]
+      }
+      Payload.new(raw_payload, metadata)
+    end
+
+    def process_payload!(payload)
+      case payload.event_name
+      when "ping"
+        # Do nothing because this is a kind of healthcheck.
+        nil
+      when "workflow_run"
+        return unless payload.released?
+        deploy(payload)
+      else
+        raise RequestError.new(:bad_request, "Unsupported event: <#{payload.event_name}>")
+      end
+    end
+
+    def deploy(payload)
+      Thread.new do
+        # TODO: call rake tasks for sign packages.
+        # TODO: write down the errors into log files.
+      end
     end
   end
 end
