@@ -36,8 +36,8 @@ module Deployer
           raise RequestError.new(:method_not_allowed, "must POST")
         end
         verify_signature!(request)
-        payload = parse_body(request)
-        process_payload(payload, response)
+        payload = parse_body!(request)
+        process_payload!(payload, response)
       rescue RequestError => request_error
         response.set(request_error.status, request_error.message)
       rescue => e
@@ -55,7 +55,7 @@ module Deployer
       end
     end
 
-    def parse_body(request)
+    def parse_body!(request)
       unless request.media_type == "application/json"
         raise RequestError.new(:bad_request, "invalid payload format")
       end
@@ -77,7 +77,7 @@ module Deployer
       Payload.new(raw_payload, metadata)
     end
 
-    def process_payload(payload, response)
+    def process_payload!(payload, response)
       case payload.event_name
       when "ping"
         # Do nothing because this is a kind of healthcheck.
