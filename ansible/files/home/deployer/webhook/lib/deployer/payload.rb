@@ -17,7 +17,7 @@
 
 module Deployer
   class Payload
-    RELEASE_WORKFLOWS= ["Package", "CMake"].freeze
+    RELEASE_WORKFLOWS = ["Package", "CMake"].freeze
 
     def initialize(data, metadata={})
       @data = data
