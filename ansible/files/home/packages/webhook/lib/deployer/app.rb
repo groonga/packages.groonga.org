@@ -72,7 +72,7 @@ module Deployer
       rescue JSON::ParserError
         raise RequestError.new(:bad_request,
                                "invalid JSON format: #{$!.message}\n" +
-                               "#{body}")
+                               body)
       end
 
       metadata = {
