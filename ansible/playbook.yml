@@ -19,10 +19,7 @@
           - apt-listchanges
           - apt-transport-https
           - apticron
-          - bundler
-          - gh
           - git
-          - gpg
           - iotop
           - logrotate
           - lv
@@ -57,7 +54,18 @@
         dest: /etc/sudoers.d/sudo-nopasswd
         mode: 0400
 
-    # User
+    # Packages
+    - name: Install packages for packages
+      apt:
+        name:
+          - apt-utils
+          - bundler
+          - createrepo-c
+          - devscripts
+          - gh
+          - gpg
+          - rpm
+          - rsync
     - name: Create "packages" user
       user:
         name: packages
