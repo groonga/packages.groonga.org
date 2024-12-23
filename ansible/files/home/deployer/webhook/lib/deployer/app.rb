@@ -94,6 +94,7 @@ module Deployer
       release_tasks = Proc.new do
         Thread.new do
           # TODO: call rake tasks for sign packages.
+          # TODO: write down the errors into log files.
         end
       end
       response.set_finish_proc(release_tasks)
