@@ -17,6 +17,7 @@
 require "json"
 require "openssl"
 require_relative "error"
+require_relative "logger"
 require_relative "payload"
 require_relative "response"
 
@@ -94,7 +95,8 @@ module Deployer
     def deploy(payload)
       Thread.new do
         # TODO: call rake tasks for sign packages.
-        # TODO: write down the errors into log files.
+      rescue => e
+        Logger.log("error.log", e.message)
       end
     end
   end
