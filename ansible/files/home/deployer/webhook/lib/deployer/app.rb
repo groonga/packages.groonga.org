@@ -38,8 +38,10 @@ module Deployer
         verify_signature!(request)
         payload = parse_body(request)
         process_payload(payload, response)
+      rescue RequestError => request_error
+        response.set(request_error.status, request_error.message)
       rescue => e
-        response.set(:bad_request, e.message)
+        response.set(:internal_server_error, e.message)
       end
     end
 
