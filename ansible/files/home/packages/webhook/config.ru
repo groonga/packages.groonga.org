@@ -15,4 +15,18 @@
 
 require_relative "lib/deployer"
 
+dot_env_path = File.join(__dir__, ".env")
+if File.exist?(dot_env_path)
+  File.open(dot_env_path) do |dot_env|
+    dot_env.each_line(chomp: true) do |line|
+      line.strip!
+      next if line.empty?
+      next if line.start_with?("#")
+      key, value = line.split("=", 2)
+      next if value.nil?
+      ENV[key] = value
+    end
+  end
+end
+
 run Deployer::App.new

@@ -162,6 +162,13 @@
         chdir: ~packages/
       vars:
         ansible_ssh_pipelining: true
+    - name: Put ~packages/webhook/.env
+      template:
+        src: home/packages/webhook/.env.jinja
+        dest: ~packages/webhook/.env
+        owner: packages
+        group: packages
+        mode: 0600
 
     # Let's encrypt
     - name: Install certbot
