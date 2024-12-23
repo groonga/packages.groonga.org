@@ -69,7 +69,9 @@ module Deployer
       begin
         raw_payload = JSON.parse(body)
       rescue JSON::ParserError
-        raise RequestError.new(:bad_request, "invalid JSON format: <#{$!.message}>")
+        raise RequestError.new(:bad_request,
+                               "invalid JSON format: #{$!.message}\n" +
+                               "#{body}")
       end
 
       metadata = {
