@@ -37,7 +37,7 @@ module Deployer
         end
         verify_signature!(request)
         payload = parse_body!(request)
-        process_payload!(payload, response)
+        process_payload!(payload)
       rescue RequestError => request_error
         response.set(request_error.status, request_error.message)
       rescue => e
@@ -77,27 +77,24 @@ module Deployer
       Payload.new(raw_payload, metadata)
     end
 
-    def process_payload!(payload, response)
+    def process_payload!(payload)
       case payload.event_name
       when "ping"
         # Do nothing because this is a kind of healthcheck.
         nil
       when "workflow_run"
         return unless payload.released?
-        deploy(payload, response)
+        deploy(payload)
       else
         raise RequestError.new(:bad_request, "Unsupported event: <#{payload.event_name}>")
       end
     end
 
-    def deploy(payload, response)
-      release_tasks = Proc.new do
-        Thread.new do
-          # TODO: call rake tasks for sign packages.
-          # TODO: write down the errors into log files.
-        end
+    def deploy(payload)
+      Thread.new do
+        # TODO: call rake tasks for sign packages.
+        # TODO: write down the errors into log files.
       end
-      response.set_finish_proc(release_tasks)
     end
   end
 end

@@ -1,7 +1,5 @@
 # Copyright (C) 2010-2019  Sutou Kouhei <kou@clear-code.com>
 # Copyright (C) 2015  Kenji Okimoto <okimoto@clear-code.com>
-# Copyright (C) 2024  Horimoto Yasuhiro <horimoto@clear-code.com>
-# Copyright (C) 2024  Takuya Kodama <otegami@clear-code.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,14 +22,6 @@ module Deployer
       self.status = Rack::Utils.status_code(status_keyword)
       self["Content-Type"] = "text/plain"
       write(message)
-    end
-
-    def set_finish_proc(proc)
-      @proc = proc
-    end
-
-    def finish
-      super(&@proc)
     end
   end
 end
