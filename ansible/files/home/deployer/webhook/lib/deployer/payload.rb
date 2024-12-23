@@ -56,8 +56,7 @@ module Deployer
     end
 
     def repository_owner
-      owner = self["repository.owner"] || {}
-      owner["login"]
+      self["repository.owner.login"]
     end
 
     def repository_name
