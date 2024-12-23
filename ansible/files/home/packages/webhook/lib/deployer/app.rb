@@ -22,6 +22,12 @@ require_relative "response"
 
 module Deployer
   class App
+    def initialize(base_dir)
+      @base_dir = base_dir
+      @log_dir = base_dir + "log"
+      @log_dir.mkpath
+    end
+
     def call(env)
       request = Rack::Request.new(env)
       response = Response.new
@@ -94,9 +100,30 @@ module Deployer
     end
 
     def deploy(payload)
+      env = {
+        "GITHUB_OWNER" => payload.repository_owner,
+        "GITHUB_REPOSITORY" => payload.repository_name,
+        "VERSION" => payload.version,
+        "TAG" => payload.tag_name,
+      }
+      case [env["GITHUB_OWNER"], env["GITHUB_REPOSITORY"]]
+      when ["groonga", "groonga"]
+        env["PACKAGE"] = "groonga"
+      when ["mroonga", "mroonga"]
+        env["PACKAGE"] = "mroonga"
+      end
+      return unless env["PACKAGE"]
+
+      return # We'll enable this later
+
       Thread.new do
-        # TODO: call rake tasks for sign packages.
-        # TODO: write down the errors into log files.
+        pid = spawn(env,
+                    "bin/rake",
+                    in: IO::NULL,
+                    out: (@log_dir + "deploy.output.log").to_s,
+                    err: (@log_dir + "deploy.error.log").to_s,
+                    chdir: (@base_dir + "..").to_s)
+        Process.waitpid(pid)
       end
     end
   end

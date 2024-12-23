@@ -26,3 +26,5 @@ archive_task = ArchiveTask.new(release)
 archive_task.define
 repository_task = RepositoryTask.new(release)
 repository_task.define
+
+task default: ["deploy:archives", "deploy:repositories"]

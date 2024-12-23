@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+require "pathname"
+
 require_relative "lib/deployer"
 
 dot_env_path = File.join(__dir__, ".env")
@@ -29,4 +31,4 @@ if File.exist?(dot_env_path)
   end
 end
 
-run Deployer::App.new
+run Deployer::App.new(Pathname(__dir__).expand_path)

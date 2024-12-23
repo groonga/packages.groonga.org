@@ -44,15 +44,34 @@ module Deployer
       self["workflow_run.head_branch"]
     end
 
+    def tag_name
+      case event_name
+      when "release"
+        self["release.tag_name"]
+      when "workflow_run"
+        return nil unless workflow_tag?
+        branch
+      else
+        nil
+      end
+    end
+
     def version
       return unless workflow_tag?
-      branch.delete_prefix("v")
+      tag_name.delete_prefix("v")
     end
 
     def released?
-      RELEASE_WORKFLOWS.include?(workflow_name) &&
-      workflow_tag? &&
-      workflow_succeeded?
+      case event_name
+      when "release"
+        true
+      when "workflow_run"
+        RELEASE_WORKFLOWS.include?(workflow_name) &&
+          workflow_tag? &&
+          workflow_succeeded?
+      else
+        false
+      end
     end
 
     def repository_owner
