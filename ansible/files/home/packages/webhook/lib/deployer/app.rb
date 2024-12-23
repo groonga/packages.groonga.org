@@ -16,6 +16,7 @@
 
 require "json"
 require "openssl"
+require_relative "error"
 require_relative "payload"
 require_relative "response"
 
