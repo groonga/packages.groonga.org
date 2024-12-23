@@ -71,6 +71,9 @@
         - bin/
         - public/
         - tasks/
+        - webhook/lib/
+        - webhook/lib/deployer
+        - webhook/public/
     - name: Put ~packages/.forward
       copy:
         content: "packages@groonga.org"
@@ -100,14 +103,32 @@
       with_items:
         - Gemfile
         - Rakefile
+        - tasks/archive-task.rb
         - tasks/github-client.rb
         - tasks/release.rb
         - tasks/repository-task.rb
-        - tasks/source-archive-task.rb
+        - tasks/state.rb
+    - name: Put ~packages/webhook/ and related files
+      copy:
+        src: home/packages/webhook/{{ item }}
+        dest: ~packages/webhook/{{ item }}
+        owner: packages
+        group: packages
+      with_items:
+        - Gemfile
+        - config.ru
+        - lib/deployer.rb
+        - lib/deployer/app.rb
+        - lib/deployer/error.rb
+        - lib/deployer/payload.rb
+        - lib/deployer/response.rb
     - name: Remove Gemfile.lock
       file:
-        path: ~packages/Gemfile.lock
+        path: ~packages/{{ item }}/Gemfile.lock
         state: absent
+      with_items:
+        - .
+        - webhook
     - name: Update gems
       become_user: packages
       shell: |
@@ -115,9 +136,12 @@
         bundle config path vendor/bundle
         bundle install
       args:
-        chdir: ~packages/
+        chdir: ~packages/{{ item }}
       vars:
         ansible_ssh_pipelining: true
+      with_items:
+        - .
+        - webhook
     - name: Put ~packages/gpg-key.asc
       template:
         src: home/packages/gpg-key.asc.jinja
