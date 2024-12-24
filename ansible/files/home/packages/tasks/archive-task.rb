@@ -154,7 +154,7 @@ class ArchiveTask
         base_name,
         latest_base_name,
       ].each do |target_base_name|
-        target = "/source/#{@release.package}/#{target_base_name}"
+        target = "/#{type}/#{@release.package}/#{target_base_name}"
         htaccess_content << "Redirect #{target} #{url}\n"
         htaccess_content << "Redirect #{target}.asc #{url}.asc\n"
       end
