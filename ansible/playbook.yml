@@ -63,6 +63,7 @@
           - createrepo-c
           - devscripts
           - gh
+          - gnupg2
           - gpg
           - rpm
           - rsync
