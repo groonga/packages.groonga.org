@@ -111,11 +111,12 @@ module Deployer
       when ["groonga", "groonga"]
         env["PACKAGE"] = "groonga"
       when ["mroonga", "mroonga"]
+        # Mroonga 14.12 or later use this.
+        return if Gem::Version.new(payload.version) < Gem::Version.new("14.12")
         env["PACKAGE"] = "mroonga"
+      else
+        return
       end
-      return unless env["PACKAGE"]
-
-      return # We'll enable this later
 
       Thread.new do
         pid = spawn(env,
