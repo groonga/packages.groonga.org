@@ -101,6 +101,7 @@ module Deployer
 
     def deploy(payload)
       env = {
+        "BUNDLE_GEMFILE" => nil, # Enforce using ../Gemfile
         "GITHUB_OWNER" => payload.repository_owner,
         "GITHUB_REPOSITORY" => payload.repository_name,
         "VERSION" => payload.version,
