@@ -383,7 +383,14 @@ APT::FTPArchive::Release::Description "#{repository_description}";
     end
 
     current_dists_dir = current_distribution_dir + "dists" + code_name
-    Dir.mktmpdir do |merged_dists_dir|
+    Dir.mktmpdir do |merged_dists_base_dir|
+      # Create a sub directory under a temporary directory to avoid a
+      # permission problem. Temporary directory has 0700 mode. If we
+      # use "rsync -av #{merged_dists_base_dir}", deployed directory
+      # also has 0700 mode. It's not expected because the deployed
+      # directory is served as publicly.
+      merged_dists_base_dir = File.join(merged_dists_base_dir, "dists")
+      mkdir(merged_dists_dir)
       merger = APTDistsMerge::Merger.new(current_dists_dir.to_s,
                                          dists_dir.to_s,
                                          merged_dists_dir)
