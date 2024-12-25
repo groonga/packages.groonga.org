@@ -110,6 +110,8 @@ module Deployer
       case [env["GITHUB_OWNER"], env["GITHUB_REPOSITORY"]]
       when ["groonga", "groonga"]
         env["PACKAGE"] = "groonga"
+      when ["groonga", "groonga-normalizer-mysql"]
+        env["PACKAGE"] = "groonga-normalizer-mysql"
       when ["mroonga", "mroonga"]
         # Mroonga 14.12 or later use this.
         return if Gem::Version.new(payload.version) < Gem::Version.new("14.12")
