@@ -180,6 +180,7 @@
         mode: 0600
       with_items:
         - .env.groonga
+        - .env.mroonga
         - webhook/.env
 
     # Let's encrypt
