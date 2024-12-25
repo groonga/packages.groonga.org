@@ -57,14 +57,20 @@ module Deployer
     end
 
     def version
-      return unless workflow_tag?
+      case event_name
+      when "release"
+      when "workflow_run"
+        return nil unless workflow_tag?
+      else
+        return nil
+      end
       tag_name.delete_prefix("v")
     end
 
     def released?
       case event_name
       when "release"
-        true
+        self["action"] == "published"
       when "workflow_run"
         RELEASE_WORKFLOWS.include?(workflow_name) &&
           workflow_tag? &&

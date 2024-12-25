@@ -91,7 +91,7 @@ module Deployer
       case payload.event_name
       when "ping"
         # Do nothing because this is a kind of healthcheck.
-      when "workflow_run"
+      when "release", "workflow_run"
         return unless payload.released?
         deploy(payload)
       else
