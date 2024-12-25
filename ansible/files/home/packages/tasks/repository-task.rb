@@ -389,7 +389,7 @@ APT::FTPArchive::Release::Description "#{repository_description}";
       # use "rsync -av #{merged_dists_base_dir}", deployed directory
       # also has 0700 mode. It's not expected because the deployed
       # directory is served as publicly.
-      merged_dists_base_dir = File.join(merged_dists_base_dir, "dists")
+      merged_dists_dir = File.join(merged_dists_base_dir, "dists")
       mkdir(merged_dists_dir)
       merger = APTDistsMerge::Merger.new(current_dists_dir.to_s,
                                          dists_dir.to_s,
