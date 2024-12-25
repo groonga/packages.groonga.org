@@ -45,4 +45,3 @@ class State
     end
   end
 end
-

@@ -22,6 +22,23 @@ release = Release.new
 release.gpg_key_id = "2701F317CFCCCB975CADE9C2624CF77434839225"
 release.base_dir = Pathname(__dir__).expand_path
 release.public_dir = release.base_dir + "public"
+
+if release.github_owner
+  dot_env_path = File.join(__dir__, ".env.#{release.github_owner}")
+  if File.exist?(dot_env_path)
+    File.open(dot_env_path) do |dot_env|
+      dot_env.each_line(chomp: true) do |line|
+        line.strip!
+        next if line.empty?
+        next if line.start_with?("#")
+        key, value = line.split("=", 2)
+        next if value.nil?
+        ENV[key] = value
+      end
+    end
+  end
+end
+
 archive_task = ArchiveTask.new(release)
 archive_task.define
 repository_task = RepositoryTask.new(release)
