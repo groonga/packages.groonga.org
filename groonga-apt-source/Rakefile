@@ -35,7 +35,6 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
 
   def apt_targets_default
     [
-      "debian-bullseye",
       "debian-bookworm",
       "debian-trixie",
       "ubuntu-focal",
@@ -78,9 +77,7 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
 
         debs = [latest_deb]
         case target
-        when "debian-buster",
-             "debian-bullseye",
-             "ubuntu-bionic",
+        when "ubuntu-bionic",
              "ubuntu-focal"
           # For backward compatibility.
           # Users can install the apt-source package by

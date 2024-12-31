@@ -3,10 +3,9 @@ Section: misc
 Priority: important
 Maintainer: Groonga <packages@groonga.org>
 Build-Depends:
-  debhelper (>= 9),
-  gnupg,
+  debhelper (>= 12),
   lsb-release
-Standards-Version: 3.9.7
+Standards-Version: 4.5.0
 Homepage: https://groonga.org/
 
 Package: groonga-apt-source
@@ -16,7 +15,7 @@ Replaces: groonga-archive-keyring (<< 2020.8.7-1)
 Breaks: groonga-archive-keyring (<< 2020.8.7-1)
 Depends:
   ${misc:Depends},
-  apt-transport-https,
+  ca-certificates,
   gnupg
 Description: GnuPG archive key and APT source of the Groonga archive
  The Groonga project digitally signs its Release files. This
