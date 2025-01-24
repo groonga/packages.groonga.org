@@ -116,6 +116,8 @@ module Deployer
         # Mroonga 14.12 or later use this.
         return if Gem::Version.new(payload.version) < Gem::Version.new("14.12")
         env["PACKAGE"] = "mroonga"
+      when ["pgroonga", "pgroonga"]
+        env["PACKAGE"] = "pgroonga"
       else
         return
       end
