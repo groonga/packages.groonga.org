@@ -28,6 +28,12 @@ class GitHubClient
     end
   end
 
+  def latest_release
+    api_uri("releases/latest").open do |input|
+      JSON.parse(input.read)
+    end
+  end
+
   private
   def api_uri(path)
     URI("https://api.github.com/repos/#{@owner}/#{@repository}/#{path}")
