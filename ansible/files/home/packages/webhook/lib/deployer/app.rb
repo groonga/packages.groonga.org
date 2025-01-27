@@ -19,7 +19,6 @@ require "openssl"
 require_relative "error"
 require_relative "payload"
 require_relative "response"
-require_relative "../../tasks/github-client"
 
 module Deployer
   class App
@@ -101,8 +100,6 @@ module Deployer
     end
 
     def deploy(payload)
-      return unless payload.latest_released?
-
       env = {
         "BUNDLE_GEMFILE" => nil, # Enforce using ../Gemfile
         "GITHUB_OWNER" => payload.repository_owner,

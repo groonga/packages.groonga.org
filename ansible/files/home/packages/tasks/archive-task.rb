@@ -32,6 +32,8 @@ class ArchiveTask
     namespace :deploy do
       desc "Deploy archives"
       task :archives do
+        return unless @github_client.latest_released?(@release.tag)
+
         target_assets.each do |type, asset|
           base_name = asset["name"]
           if type == "source"

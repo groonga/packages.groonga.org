@@ -127,6 +127,8 @@ class RepositoryTask
     namespace :deploy do
       desc "Deploy repositories"
       task :repositories do
+        return unless @github_client.latest_released?(@release.tag)
+
         target_assets.each do |target, asset|
           state = State.new(@release.base_dir,
                             @release.package,

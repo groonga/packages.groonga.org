@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-require_relative "../../../tasks/github-client"
-
 module Deployer
   class Payload
     RELEASE_WORKFLOWS = ["Package", "CMake"].freeze
@@ -80,11 +78,6 @@ module Deployer
       else
         false
       end
-    end
-
-    def latest_released?
-      client = GitHubClient.new(repository_owner, repository_name)
-      client.latest_releasep["tag_name"] == tag_name
     end
 
     def repository_owner

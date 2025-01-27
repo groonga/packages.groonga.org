@@ -34,6 +34,10 @@ class GitHubClient
     end
   end
 
+  def latest_released?(tag)
+    latest_release["tag_name"] == tag
+  end
+
   private
   def api_uri(path)
     URI("https://api.github.com/repos/#{@owner}/#{@repository}/#{path}")
