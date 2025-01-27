@@ -179,7 +179,7 @@ class RepositoryTask
 
 
   def target_assets
-    return {} unless @github_client.latest_released?(@release.tag)
+    return {} unless @github_client.latest_released_tag?(@release.tag)
 
     assets = {}
     @github_client.release(@release.tag)["assets"].each do |asset|

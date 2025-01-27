@@ -73,7 +73,7 @@ class ArchiveTask
 
   private
   def target_assets
-    return [] unless @github_client.latest_released?(@release.tag)
+    return [] unless @github_client.latest_released_tag?(@release.tag)
 
     source_archive_assets = {}
     windows_binary_assets = {}
