@@ -181,6 +181,7 @@
       with_items:
         - .env.groonga
         - .env.mroonga
+        - .env.pgroonga
         - webhook/.env
 
     # Let's encrypt
