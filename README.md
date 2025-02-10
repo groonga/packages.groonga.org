@@ -50,6 +50,16 @@ This repository is for packages.groonga.org.
    * e.g. `GH_TOKEN={{ packages.github_token.pgroonga }}`
 10. Add the added `.env.#{PROJECT}.jinja` to `ansible/playbook.yml`
 11. Deploy by `rake deploy`
+12. Add a webhook to the target project
+    * e.g. https://github.com/pgroonga/pgroonga/settings/hooks
+      * Payload URL: https://packages.groonga.org/webhook
+      * Content type: `application/json`
+      * Secret: See `packages.webhook.secret_token` in `ansible-vault
+        view --vault-password-file=ansible/password
+        ansible/vars/private.yml`
+      * Which events would you like to trigger this webhook?:
+        * `Let me select individual events.`
+        * `Releases`
 
 ## License
 
