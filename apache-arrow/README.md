@@ -29,7 +29,7 @@ Therefore, we intend to stop mirroring once the Apache Arrow repository is stabl
 	 end
    ```
 
-2. Downlod Apache Arrow packages
+2. Download Apache Arrow packages
 
    ```console
    $ cd packages.groonga.org/apache-arrow
