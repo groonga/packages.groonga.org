@@ -18,7 +18,7 @@ This repository is for packages.groonga.org.
 1. Create a new team for release in the target organization
    * e.g. Create `pgroonga-release` at
      https://github.com/orgs/pgroonga/new-team for PGroonga
-2. Add `groonga-release` to the added team
+2. Add the `groonga-release` user to the added team
 3. Add the added team to target project's collaborators with "Write"
    role
    * e.g. Add the added team to pgroonga/pgroonga with "Write" role at
@@ -28,7 +28,7 @@ This repository is for packages.groonga.org.
      * "Allow access via fine-grained personal access tokens"
      * "Require administrator approval"
      * "Restrict access via personal access tokens (classic)"
-5. Login to GitHub as `groonga-release`
+5. Login to GitHub as the `groonga-release` user
 6. Create a new fine-grained personal access token at
    https://github.com/settings/personal-access-tokens
    * Token name: Project name: e.g. PGroonga
