@@ -39,16 +39,17 @@ This repository is for packages.groonga.org.
      * Contents: Read and write: We need to upload signed artifacts to
        GitHub Releases
    * You must copy the generated token
-7. Add the generated token to `ansible/vars/private.yml`
+7. Add the generated token to `packages.github_token.${ORGANIZATION}`
+   in `ansible/vars/private.yml`
    * e.g. Run `rake private.yml` and add
      `packages.github_token.pgroonga` with the copied generated token
 8. Approve the created fine-grained personal access token in the
    target organization
    * e.g. https://github.com/organizations/pgroonga/settings/personal-access-token-requests
-9. Add `ansible/templates/home/packages/.env.#{PROJECT}.jinja` with
-   `GH_TOKEN={{ packages.github_token.#{PROJECT} }}`
+9. Add `ansible/templates/home/packages/.env.#{ORGANIZATION}.jinja` with
+   `GH_TOKEN={{ packages.github_token.#{ORGANIZATION} }}`
    * e.g. `GH_TOKEN={{ packages.github_token.pgroonga }}`
-10. Add the added `.env.#{PROJECT}.jinja` to `ansible/playbook.yml`
+10. Add the added `.env.#{ORGANIZATION}.jinja` to `ansible/playbook.yml`
 11. Deploy by `rake deploy`
 12. Add a webhook to the target project
     * e.g. https://github.com/pgroonga/pgroonga/settings/hooks
