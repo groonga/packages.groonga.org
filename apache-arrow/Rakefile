@@ -5,6 +5,8 @@ require_relative "../packages-groonga-org-package-task"
 class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def initialize
     super("apache-arrow", "19.0.1", Time.new(2025, 2, 16))
+    major, minor, patch = @version.split(".").collect(&:to_i)
+    @so_version = ((major * 100) + minor).to_s
   end
 
   private
@@ -31,12 +33,9 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
 
   def apt_targets
     [
-      # We want to remove debian-bookworm because we want to use the
-      # official Apache Arrow APT repository. But we keep this only
-      # for Zulip. Zulip uses packages.groonga.org temporary when the
-      # official Apache Arrow APT repository was down.
       "debian-bookworm",
-      "ubuntu-focal",
+      "ubuntu-jammy",
+      "ubuntu-noble",
     ]
   end
 
@@ -45,11 +44,23 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
       distribution, code_name = target.split("-", 2)
       base_directory = "#{distribution}/pool/#{code_name}/main/"
       base_directory << "#{@package[0]}/"
-      base_directory << "#{@package}"
-      download_files(base_directory,
+      download_files(base_directory + @package,
                      "#{apt_dir}/repositories",
                      /\A#{Regexp.escape(@package)}_#{Regexp.escape(@version)}/,
-                     /_#{Regexp.escape(@version)}-\d+_(?:amd64|arm64)\.deb\z/)
+                     /\Alibarrow#{Regexp.escape(@so_version)}_
+                        #{Regexp.escape(@version)}-\d+_(?:amd64|arm64)\.deb\z/x)
+
+      apt_source_package = "#{@package}-apt-source"
+      download_files(base_directory + apt_source_package,
+                     "#{apt_dir}/repositories",
+                     /\A#{Regexp.escape(apt_source_package)}_
+                        #{Regexp.escape(@version)}/x)
+
+      if target.start_with?("ubuntu-")
+        code_name = target.split("-", 2)[1]
+        mv("#{apt_dir}/repositories/ubuntu/pool/#{code_name}/main",
+           "#{apt_dir}/repositories/ubuntu/pool/#{code_name}/universe")
+      end
     end
   end
 
@@ -72,17 +83,25 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
       rpm_base_directory = "#{distribution}/#{version}/x86_64/Packages"
       download_files(rpm_base_directory,
                      "#{yum_dir}/repositories",
-                     /-#{Regexp.escape(@version)}-\d+\.[^.]+\.x86_64\.rpm\z/)
+                     /\A(?:arrow#{Regexp.escape(@so_version)}-libs|
+                           apache-arrow-release)-
+                        #{Regexp.escape(@version)}-\d+\.[^.]+\.
+                          (?:x86_64|noarch)\.rpm\z/x)
 
       rpm_base_directory = "#{distribution}/#{version}/aarch64/Packages"
       download_files(rpm_base_directory,
                      "#{yum_dir}/repositories",
-                     /-#{Regexp.escape(@version)}-\d+\.[^.]+\.aarch64\.rpm\z/)
+                     /\A(?:arrow#{Regexp.escape(@so_version)}-libs|
+                           apache-arrow-release)-
+                        #{Regexp.escape(@version)}-\d+\.[^.]+\.
+                          (?:aarch64|noarch)\.rpm\z/x)
 
       srpm_base_directory = "#{distribution}/#{version}/Source/SPackages"
       download_files(srpm_base_directory,
                      "#{yum_dir}/repositories",
-                     /-#{Regexp.escape(@version)}-\d+\.[^.]+\.src\.rpm\z/)
+                     /\A(?:arrow|apache-arrow-release)-
+                        #{Regexp.escape(@version)}-\d+\.[^.]+\.src\.rpm\z/x)
+      rm_rf("#{yum_dir}/repositories/#{distribution}/#{version}/source")
       mv("#{yum_dir}/repositories/#{distribution}/#{version}/Source",
          "#{yum_dir}/repositories/#{distribution}/#{version}/source")
       mv("#{yum_dir}/repositories/#{distribution}/#{version}/source/SPackages",
