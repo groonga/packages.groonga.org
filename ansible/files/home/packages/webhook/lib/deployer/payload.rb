@@ -17,8 +17,6 @@
 
 module Deployer
   class Payload
-    RELEASE_WORKFLOWS = ["Package", "CMake"].freeze
-
     def initialize(data, metadata={})
       @data = data
       @metadata = metadata
@@ -32,25 +30,10 @@ module Deployer
       @metadata["x-github-event"]
     end
 
-    def workflow_name
-      self["workflow_run.name"]
-    end
-
-    def workflow_succeeded?
-      self["workflow_run.conclusion"] == "success"
-    end
-
-    def branch
-      self["workflow_run.head_branch"]
-    end
-
     def tag_name
       case event_name
       when "release"
         self["release.tag_name"]
-      when "workflow_run"
-        return nil unless workflow_tag?
-        branch
       else
         nil
       end
@@ -59,22 +42,16 @@ module Deployer
     def version
       case event_name
       when "release"
-      when "workflow_run"
-        return nil unless workflow_tag?
+        tag_name.delete_prefix("v")
       else
-        return nil
+        nil
       end
-      tag_name.delete_prefix("v")
     end
 
     def released?
       case event_name
       when "release"
         self["action"] == "published"
-      when "workflow_run"
-        RELEASE_WORKFLOWS.include?(workflow_name) &&
-          workflow_tag? &&
-          workflow_succeeded?
       else
         false
       end
@@ -86,13 +63,6 @@ module Deployer
 
     def repository_name
       self["repository.name"]
-    end
-
-    private
-
-    def workflow_tag?
-      return false unless branch
-      branch.match?(/\Av\d+(\.\d+){1,2}\z/)
     end
   end
 end
