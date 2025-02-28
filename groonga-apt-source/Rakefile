@@ -37,7 +37,6 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
     [
       "debian-bookworm",
       "debian-trixie",
-      "ubuntu-focal",
       "ubuntu-jammy",
       "ubuntu-noble",
     ]
@@ -77,8 +76,7 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
 
         debs = [latest_deb]
         case target
-        when "ubuntu-bionic",
-             "ubuntu-focal"
+        when "ubuntu-bionic"
           # For backward compatibility.
           # Users can install the apt-source package by
           # the old "apt install ./XXX-archive-keyring_*.deb".
