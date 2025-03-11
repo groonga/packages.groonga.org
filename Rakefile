@@ -1,8 +1,13 @@
 # -*- ruby -*-
 
 require_relative "helper"
-require_relative "vendor/groonga/packages/repository-helper"
 require_relative "vendor/packages.red-data-tools.org/repository-task"
+
+groonga_repository = ENV["GROONGA_REPOSITORY"]
+if groonga_repository.nil?
+  raise "Specify GROONGA_REPOSITORY environment variable"
+end
+require "#{groonga_repository}/packages/repository-helper"
 
 user = ENV["ANSIBLE_GPG_USER"] || ENV["USER"]
 file "ansible/password" => "ansible/password.#{user}.asc" do |task|
