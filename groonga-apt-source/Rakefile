@@ -118,6 +118,10 @@ class GroongaAptSourcePackageTask < PackagesGroongaOrgPackageTask
   def enable_yum?
     false
   end
+
+  def github_repository
+    "groonga/packages.groonga.org"
+  end
 end
 
 task = GroongaAptSourcePackageTask.new
