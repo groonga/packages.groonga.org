@@ -5,20 +5,18 @@
 #export DH_VERBOSE=1
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
-export GROONGA_HOME := $(shell mktemp -d)
+export GNUPGHOME := $(shell mktemp -d)
 
 %:
 	dh $@
 
 override_dh_auto_build:
-	mkdir -p $(GROONGA_HOME)/.gnupg
+	mkdir -p $(GNUPGHOME)/.gnupg
 	gpg \
-	  --homedir $(GROONGA_HOME) \
 	  --no-default-keyring \
 	  --keyring ./groonga-archive-keyring.kbx \
 	  --import keys
 	gpg \
-	  --homedir $(GROONGA_HOME) \
 	  --no-default-keyring \
 	  --keyring ./groonga-archive-keyring.kbx \
 	  --export \
