@@ -11,11 +11,16 @@ export DH_OPTIONS
 
 override_dh_auto_build:
 	gpg \
+	  --no-autostart \
 	  --no-default-keyring \
+	  --no-options \
+	  --lock-never \
+	  --trustdb-name ./groonga-key-database \
 	  --keyring ./groonga-archive-keyring.kbx \
 	  --import keys
 	gpg \
 	  --no-default-keyring \
+	  --no-options \
 	  --keyring ./groonga-archive-keyring.kbx \
 	  --export \
 	  --armor > groonga-archive-keyring.asc
