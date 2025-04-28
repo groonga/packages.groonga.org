@@ -4,7 +4,7 @@ require_relative "../packages-groonga-org-package-task"
 
 class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def initialize
-    super("apache-arrow", "19.0.1", Time.new(2025, 2, 16))
+    super("apache-arrow", "20.0.0", Time.new(2025, 4, 27))
     major, minor, patch = @version.split(".").collect(&:to_i)
     @so_version = ((major * 100) + minor).to_s
   end
