@@ -6,7 +6,7 @@ class GroongaReleasePackageTask < PackagesGroongaOrgPackageTask
   def initialize
     super("groonga-release",
           repository_version,
-          latest_commit_time(File.join(__dir__, "..")))
+          detect_release_time)
   end
 
   def define
