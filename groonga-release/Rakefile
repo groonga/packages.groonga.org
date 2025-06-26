@@ -144,6 +144,10 @@ enabled=#{target[:enabled]}
       task :release => :latest
     end
   end
+
+  def github_repository
+    "groonga/packages.groonga.org"
+  end
 end
 
 task = GroongaReleasePackageTask.new
