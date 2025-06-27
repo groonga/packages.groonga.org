@@ -34,12 +34,13 @@ class ArchiveTask
       task :archives do
         target_assets.each do |type, asset|
           base_name = asset["name"]
-          if type == "source"
+          case type
+          when "source"
             # groonga-14.1.1.tar.gz -> tar.gz
             # groonga-14.1.1.zip    -> zip
             extension = base_name.delete_prefix("#{@release.base_name}.")
             state_id = "source-#{extension}"
-          else
+          when "windows"
             # groonga-14.1.1-x64-vs2019-with-vcruntime.zip ->
             # x64-vs2019-with-vcruntime
             #
@@ -49,6 +50,13 @@ class ArchiveTask
                             delete_prefix("#{@release.base_name}-").
                             delete_suffix(".zip")
             state_id = "windows-#{binary_type}"
+          when "archlinux"
+            # groonga-15.1.1-1-x86_64.pkg.tar.zst ->
+            # groonga
+            # groonga-debug-15.1.1-1-x86_64.pkg.tar.zst ->
+            # groonga-debug
+            package_type = base_name.gsub(/-#{Regexp.escape(@release.version)}-.+/, "")
+            state_id = "archlinux-#{package_type}"
           end
           state = State.new(@release.base_dir,
                             @release.package,
@@ -77,6 +85,7 @@ class ArchiveTask
 
     source_archive_assets = {}
     windows_binary_assets = {}
+    archlinux_package_assets = {}
     sign_file_names = []
     @github_client.release(@release.tag)["assets"].each do |asset|
       file_name = asset["name"]
@@ -85,6 +94,8 @@ class ArchiveTask
         source_archive_assets[file_name] = asset
       when /\A#{Regexp.escape(@release.base_name)}-.+\.zip\z/
         windows_binary_assets[file_name] = asset
+      when /#{Regexp.escape(@release.version)}-.+\.pkg.tar.zst\z/
+        archlinux_package_assets[file_name] = assets
       when /\.asc\z/
         sign_file_names << file_name
       end
@@ -93,6 +104,7 @@ class ArchiveTask
       signed_file_name = sign_file_name.gsub(/\.asc\z/, "")
       source_archive_assets.delete(signed_file_name)
       windows_binary_assets.delete(signed_file_name)
+      archlinux_package_assets.delete(signed_file_name)
     end
     assets = []
     source_archive_assets.values.each do |asset|
@@ -100,6 +112,9 @@ class ArchiveTask
     end
     windows_binary_assets.values.each do |asset|
       assets << ["windows", asset]
+    end
+    archlinux_package_assets.values.each do |asset|
+      assets << ["archlinux", asset]
     end
     assets
   end
