@@ -92,6 +92,7 @@ enabled=#{target[:enabled]}
     [
       "almalinux-8",
       "almalinux-9",
+      "almalinux-10",
       "amazon-linux-2023",
     ]
   end
