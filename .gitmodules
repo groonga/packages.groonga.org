@@ -1,6 +1,3 @@
 [submodule "vendor/packages.red-data-tools.org"]
 	path = vendor/packages.red-data-tools.org
 	url = https://github.com/red-data-tools/packages.red-data-tools.org.git
-[submodule "vendor/groonga"]
-	path = vendor/groonga
-	url = https://github.com/groonga/groonga.git
