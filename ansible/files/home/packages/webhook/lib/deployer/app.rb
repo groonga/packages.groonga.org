@@ -118,6 +118,8 @@ module Deployer
         env["PACKAGE"] = "mroonga"
       when ["pgroonga", "pgroonga"]
         env["PACKAGE"] = "pgroonga"
+      when ["groonga", "arch-linux-packages"]
+        env["PACKAGE"] = "groonga"
       else
         return
       end
