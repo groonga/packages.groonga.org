@@ -4,7 +4,7 @@ require_relative "../packages-groonga-org-package-task"
 
 class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
   def initialize
-    super("apache-arrow", "20.0.0", Time.new(2025, 4, 27))
+    super("apache-arrow", "21.0.0", Time.new(2025, 7, 17))
     major, minor, patch = @version.split(".").collect(&:to_i)
     @so_version = ((major * 100) + minor).to_s
   end
@@ -49,6 +49,8 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
                      "#{apt_dir}/repositories",
                      /\A#{Regexp.escape(@package)}_#{Regexp.escape(@version)}/,
                      /\Alibarrow#{Regexp.escape(@so_version)}_
+                        #{Regexp.escape(@version)}-\d+_(?:amd64|arm64)\.deb\z/x,
+                     /\Alibarrow-compute#{Regexp.escape(@so_version)}_
                         #{Regexp.escape(@version)}-\d+_(?:amd64|arm64)\.deb\z/x)
 
       apt_source_package = "#{@package}-apt-source"
