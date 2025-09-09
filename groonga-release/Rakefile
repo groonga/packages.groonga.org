@@ -23,6 +23,13 @@ class GroongaReleasePackageTask < PackagesGroongaOrgPackageTask
     "RPM-GPG-KEY-#{shorten_gpg_key_id(id).downcase}"
   end
 
+  def repository_gpg_key_ids
+    super.select do |gpg_key_id|
+      # This GPG key has low strength, so we will no longer use it.
+      gpg_key_id != "C97E4649A2051D0CEA1A73F972A7496B45499429"
+    end
+  end
+
   def generate_gpg_keys
     repository_gpg_key_ids.each do |gpg_key_id|
       path = "#{@archive_base_name}/#{rpm_gpg_key_path(gpg_key_id)}"
