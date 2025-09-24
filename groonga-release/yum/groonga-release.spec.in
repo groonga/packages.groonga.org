@@ -55,6 +55,9 @@ else
 fi
 
 %changelog
+* Fri Sep 26 2025 Sutou Kouhei <kou@clear-code.com> - 2025.9.26-1
+- Remove deprecated RPM GPG key from groonga-release.
+
 * Thu Sep 25 2025 Kodama Takuya <otegami@clear-code.com> - 2025.9.25-1
 - Remove deprecated RPM GPG key from groonga-release.
 
