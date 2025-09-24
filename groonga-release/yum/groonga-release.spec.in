@@ -55,6 +55,9 @@ else
 fi
 
 %changelog
+* Thu Sep 25 2025 Kodama Takuya <otegami@clear-code.com> - 2025.9.25-1
+- Remove deprecated RPM GPG key from groonga-release.
+
 * Thu Jun 26 2025 Horimoto Yasuhiro <horimoto@clear-code.com> - 2025.6.26-1
 - Add support for AlmaLinux 10.
 
