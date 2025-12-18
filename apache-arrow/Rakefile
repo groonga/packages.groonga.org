@@ -87,6 +87,7 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
       download_files(rpm_base_directory,
                      "#{yum_dir}/repositories",
                      /\A(?:arrow#{Regexp.escape(@so_version)}-libs|
+                           arrow#{Regexp.escape(@so_version)}-compute-libs|
                            apache-arrow-release)-
                         #{Regexp.escape(@version)}-\d+\.[^.]+\.
                           (?:x86_64|noarch)\.rpm\z/x)
@@ -95,6 +96,7 @@ class ApacheArrowPackageTask < PackagesGroongaOrgPackageTask
       download_files(rpm_base_directory,
                      "#{yum_dir}/repositories",
                      /\A(?:arrow#{Regexp.escape(@so_version)}-libs|
+                           arrow#{Regexp.escape(@so_version)}-compute-libs|
                            apache-arrow-release)-
                         #{Regexp.escape(@version)}-\d+\.[^.]+\.
                           (?:aarch64|noarch)\.rpm\z/x)
