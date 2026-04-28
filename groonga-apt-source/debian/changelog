@@ -1,3 +1,9 @@
+groonga-apt-source (2026.04.28-1) unstable; urgency=low
+
+  * Added support for Ubuntu 26.04 LTS.
+
+ -- Horimoto Yasuhiro <horimoto@clear-code.com>  Tue, 28 Apr 2026 00:38:09 -0000
+
 groonga-apt-source (2024.12.31-1) unstable; urgency=low
 
   * Use armored keyring.
