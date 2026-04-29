@@ -1,6 +1,6 @@
 ### How to update
 
-1. Download, sing, and upload groonga-apt-source packages
+1. Download, sign, and upload groonga-apt-source packages
 
    ```console
    $ git clone --recursive git@github.com:groonga/packages.groonga.org.git
