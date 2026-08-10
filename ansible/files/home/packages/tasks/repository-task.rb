@@ -239,6 +239,7 @@ class RepositoryTask
            "--retain-old-md-by-age=0",
            "--skip-stat",
            "--update",
+           "--verbose",
            arch_dir.to_s)
       end
       sh("rsync",
