@@ -33,7 +33,7 @@ end
 desc "Apply the Ansible configurations"
 task :deploy => "ansible/password" do
   sh("ansible-playbook",
-     "--inventory-file", "hosts",
+     "--inventory", "hosts",
      "--vault-password-file", "ansible/password",
      "ansible/playbook.yml")
 end
